@@ -40,7 +40,7 @@ function App() {
         if (!healthCheck.ok) {
           throw new Error('Server is not responding. Make sure the server is running on port 3001.');
         }
-      } catch (err) {
+      } catch {
         throw new Error('Cannot connect to server. Please make sure the server is running: cd server && npm start');
       }
 
@@ -73,10 +73,15 @@ function App() {
   const analyzeChunk = async (chunk: VideoChunk) => {
     try {
       setIsLoading(true);
+      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      if (!apiKey) {
+        throw new Error("OpenRouter API key is not configured. Please set VITE_OPENROUTER_API_KEY in your .env file.");
+      }
+
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer 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",
+          "Authorization": `Bearer ${apiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
