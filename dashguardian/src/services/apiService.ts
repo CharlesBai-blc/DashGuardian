@@ -154,7 +154,7 @@ export const describeSectionCall = async (
 
 const SUMMARY_PROMPT = `Watch the entire video and provide a narrative summary of the incident.
 
-STRICT LIMITS: Maximum 6 sentences and 100 words total. Be concise.
+STRICT LIMITS: Maximum 5 sentences and 80 words total. Be concise.
 
 IMPORTANT: Start directly with your analysis. Do NOT include any prefixes, introductory phrases, or words like "thought", "analysis", "summary", or "here is". Begin immediately with the narrative content.
 
@@ -167,7 +167,7 @@ Describe:
 
 Refer to the dashcam vehicle ONLY as "POV vehicle". Describe other vehicles by their appearance (e.g., "red sedan", "white truck").
 
-Provide a concise, objective narrative summary in exactly 6 sentences or fewer, with a maximum of 100 words. Start directly with the narrative - no introductory text.`
+Provide a concise, objective narrative summary in exactly 5 sentences or fewer, with a maximum of 80 words. Start directly with the narrative - no introductory text.`
 
 export const generateVideoSummary = async (
   base64Video: string,
