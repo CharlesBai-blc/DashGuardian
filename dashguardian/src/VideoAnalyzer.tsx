@@ -1,9 +1,17 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { VideoPlayer } from './VideoPlayer'
 
 interface AnalysisResult {
   approx_t_s: number
   window_s: [number, number]
+}
+
+interface VideoSection {
+  name: 'ante' | 'event' | 'post'
+  label: string
+  start: number
+  end: number
+  duration: number
 }
 
 interface AggregatedResults {
@@ -16,11 +24,70 @@ export function VideoAnalyzer() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [results, setResults] = useState<AggregatedResults | null>(null)
+  const [videoDuration, setVideoDuration] = useState<number | null>(null)
+  const [sections, setSections] = useState<VideoSection[] | null>(null)
+  const hiddenVideoRef = useRef<HTMLVideoElement>(null)
+
+  // Get video duration when file changes
+  useEffect(() => {
+    if (selectedFile && hiddenVideoRef.current) {
+      const video = hiddenVideoRef.current
+      const url = URL.createObjectURL(selectedFile)
+      video.src = url
+      
+      video.onloadedmetadata = () => {
+        setVideoDuration(video.duration)
+        URL.revokeObjectURL(url)
+      }
+    } else {
+      setVideoDuration(null)
+      setSections(null)
+    }
+  }, [selectedFile])
+
+  // Calculate sections when we have both results and video duration
+  useEffect(() => {
+    if (results && videoDuration) {
+      const medianTime = results.medianTime
+      
+      // Event section: 5 seconds before to 5 seconds after median
+      const eventStart = Math.max(0, medianTime - 5)
+      const eventEnd = Math.min(videoDuration, medianTime + 5)
+      
+      const newSections: VideoSection[] = [
+        {
+          name: 'ante',
+          label: 'Ante',
+          start: 0,
+          end: eventStart,
+          duration: eventStart
+        },
+        {
+          name: 'event',
+          label: 'Event',
+          start: eventStart,
+          end: eventEnd,
+          duration: eventEnd - eventStart
+        },
+        {
+          name: 'post',
+          label: 'Post',
+          start: eventEnd,
+          end: videoDuration,
+          duration: videoDuration - eventEnd
+        }
+      ]
+      
+      setSections(newSections)
+    }
+  }, [results, videoDuration])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setResults(null);
+      setSections(null);
     }
   };
 
@@ -195,7 +262,88 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
             <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '4px' }}>
               <p style={{ margin: '5px 0' }}><strong>Median Collision Time:</strong> <span style={{ fontSize: '1.4em', fontWeight: 'bold', color: '#2e7d32' }}>{results.medianTime.toFixed(1)}s</span></p>
               <p style={{ margin: '5px 0' }}><strong>Median Window:</strong> <span style={{ fontWeight: 'bold' }}>[{results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s]</span></p>
+              {videoDuration && (
+                <p style={{ margin: '5px 0', color: '#666' }}><strong>Video Duration:</strong> {videoDuration.toFixed(1)}s</p>
+              )}
             </div>
+            
+            {/* Video Sections Display */}
+            {sections && (
+              <div style={{ marginBottom: '15px' }}>
+                <h4 style={{ marginBottom: '10px' }}>Video Sections</h4>
+                
+                {/* Visual timeline bar */}
+                <div style={{ 
+                  display: 'flex', 
+                  height: '40px', 
+                  borderRadius: '6px', 
+                  overflow: 'hidden',
+                  marginBottom: '15px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  {sections.map((section) => {
+                    const widthPercent = videoDuration ? (section.duration / videoDuration) * 100 : 0
+                    const colors = {
+                      ante: { bg: '#90caf9', border: '#1976d2' },
+                      event: { bg: '#ef5350', border: '#c62828' },
+                      post: { bg: '#a5d6a7', border: '#388e3c' }
+                    }
+                    return (
+                      <div
+                        key={section.name}
+                        style={{
+                          width: `${widthPercent}%`,
+                          backgroundColor: colors[section.name].bg,
+                          borderLeft: section.name !== 'ante' ? `2px solid ${colors[section.name].border}` : 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#1a1a1a',
+                          fontWeight: 'bold',
+                          fontSize: '0.85em',
+                          minWidth: widthPercent > 5 ? 'auto' : '0'
+                        }}
+                        title={`${section.label}: ${section.start.toFixed(1)}s - ${section.end.toFixed(1)}s (${section.duration.toFixed(1)}s)`}
+                      >
+                        {widthPercent > 10 && section.label}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Section details table */}
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9em' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#ddd' }}>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Section</th>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Start</th>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>End</th>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sections.map((section) => {
+                      const rowColors = {
+                        ante: '#e3f2fd',
+                        event: '#ffebee',
+                        post: '#e8f5e9'
+                      }
+                      return (
+                        <tr key={section.name} style={{ backgroundColor: rowColors[section.name], borderBottom: '1px solid #ccc' }}>
+                          <td style={{ padding: '8px', fontWeight: section.name === 'event' ? 'bold' : 'normal' }}>
+                            {section.name === 'event' ? '⚡ ' : ''}{section.label}
+                          </td>
+                          <td style={{ padding: '8px' }}>{section.start.toFixed(1)}s</td>
+                          <td style={{ padding: '8px' }}>{section.end.toFixed(1)}s</td>
+                          <td style={{ padding: '8px' }}>{section.duration.toFixed(1)}s</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            
             <details>
               <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Individual Results ({results.individualResults.length} responses)</summary>
               <table style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse', fontSize: '0.9em' }}>
@@ -229,6 +377,9 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
       >
         Analyze Video
       </button>
+      
+      {/* Hidden video element to get duration */}
+      <video ref={hiddenVideoRef} style={{ display: 'none' }} />
     </div>
   )
 }
