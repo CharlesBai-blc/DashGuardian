@@ -1,17 +1,9 @@
 import { useState } from 'react'
-import { VideoPlayer } from './components/VideoPlayer'
 import type { AggregatedResults, SectionDescription } from './types'
 import { convertFileToBase64, calculateMedian } from './utils'
 import { makeAnalysisCall, describeSectionCall } from './services/apiService'
 import { useVideoDuration, useVideoSections } from './hooks'
-import {
-  FileInput,
-  AnalysisResultsSummary,
-  VideoTimeline,
-  SectionDetailsTable,
-  SectionDescriptions,
-  IndividualResultsTable
-} from './components'
+import { VideoSection, AnalysisPanel } from './components'
 
 export function VideoAnalyzer() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -162,79 +154,36 @@ export function VideoAnalyzer() {
   }
 
   return (
-    <div className="card">
-      <div style={{ marginBottom: '20px' }}>
-        <FileInput
-          onFileChange={handleFileChange}
+    <>
+      {/* Left Panel - Video Section */}
+      <div id="left">
+        <VideoSection
           selectedFile={selectedFile}
+          onFileChange={handleFileChange}
           disabled={isLoading}
         />
-
-        {isLoading && <p>⏳ Analyzing video (5 parallel calls)...</p>}
-
-        {results && (
-          <div
-            style={{
-              marginTop: '20px',
-              padding: '15px',
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}
-          >
-            <h3 style={{ marginTop: 0, color: 'inherit' }}>Analysis Results</h3>
-
-            <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
-
-            {/* Video Sections Display */}
-            {sections && (
-              <div style={{ marginBottom: '15px' }}>
-                <h4 style={{ marginBottom: '10px', color: 'inherit' }}>Video Sections</h4>
-
-                <VideoTimeline sections={sections} videoDuration={videoDuration} />
-
-                <SectionDetailsTable sections={sections} />
-
-                {/* Describe Sections Button */}
-                <div style={{ marginTop: '15px' }}>
-                  <button
-                    onClick={handleDescribeSections}
-                    disabled={isDescribing}
-                    style={{
-                      padding: '10px 20px',
-                      backgroundColor: '#7c4dff',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: isDescribing ? 'not-allowed' : 'pointer',
-                      opacity: isDescribing ? 0.7 : 1,
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {isDescribing ? '⏳ Describing Sections...' : '🔍 Describe All Sections'}
-                  </button>
-                </div>
-
-                {/* Section Descriptions */}
-                {sectionDescriptions.length > 0 && (
-                  <SectionDescriptions sections={sections} descriptions={sectionDescriptions} />
-                )}
-              </div>
-            )}
-
-            <IndividualResultsTable results={results.individualResults} />
-          </div>
-        )}
+        <div id="controls">
+          <div id="scroll"></div>
+        </div>
       </div>
 
-      <VideoPlayer file={selectedFile} />
-
-      <button onClick={handleAnalyze} disabled={!selectedFile || isLoading}>
-        Analyze Video
-      </button>
+      {/* Right Panel - Analysis Panel */}
+      <div id="right">
+        <AnalysisPanel
+          selectedFile={selectedFile}
+          results={results}
+          sections={sections}
+          sectionDescriptions={sectionDescriptions}
+          videoDuration={videoDuration}
+          isLoading={isLoading}
+          isDescribing={isDescribing}
+          onAnalyze={handleAnalyze}
+          onDescribeSections={handleDescribeSections}
+        />
+      </div>
 
       {/* Hidden video element to get duration */}
       <video ref={hiddenVideoRef} style={{ display: 'none' }} />
-    </div>
+    </>
   )
 }
