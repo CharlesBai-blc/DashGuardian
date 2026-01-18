@@ -1,4 +1,5 @@
 import type { VideoSection, SectionDescription, StructuredSectionDescription } from '../types'
+import './components.css'
 
 interface SectionDescriptionsProps {
   sections: VideoSection[]
@@ -31,111 +32,35 @@ export function SectionDescriptions({ sections, descriptions }: SectionDescripti
         return (
           <div
             key={section.name}
+            className="component-card-section"
             style={{
-              marginBottom: '15px',
-              padding: '30px',
               backgroundColor: BG_COLORS[section.name],
-              borderLeft: `4px solid ${BORDER_COLORS[section.name]}`,
-              borderRadius: '0 8px 8px 0'
+              borderLeftColor: BORDER_COLORS[section.name]
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '20px'
-              }}
-            >
-              <h2
-                style={{
-                  margin: 0,
-                  color: HEADER_COLORS[section.name],
-                  fontSize: '32px',
-                  fontWeight: 600,
-                  fontFamily: '"Google Sans", sans-serif'
-                }}
-              >
+            <div className="component-flex-between component-margin-bottom">
+              <h2 className="component-heading-2" style={{ color: HEADER_COLORS[section.name] }}>
                 {section.name === 'event' ? '⚡ ' : ''}
                 {section.label}
-                <span
-                  style={{
-                    fontWeight: 400,
-                    fontSize: '18px',
-                    color: 'rgba(255,255,255,0.5)',
-                    marginLeft: '15px',
-                    fontFamily: '"Google Sans", sans-serif'
-                  }}
-                >
+                <span className="component-section-timestamp">
                   ({section.start.toFixed(1)}s - {section.end.toFixed(1)}s)
                 </span>
               </h2>
             </div>
 
             {desc?.isLoading ? (
-              <p
-                style={{
-                  color: 'rgba(255,255,255,0.6)',
-                  fontStyle: 'italic',
-                  margin: 0,
-                  fontSize: '18px',
-                  fontFamily: '"Google Sans", sans-serif'
-                }}
-              >
-                ⏳ Analyzing this section...
-              </p>
+              <p className="component-loading-text-italic">⏳ Analyzing this section...</p>
             ) : desc?.error ? (
-              <p
-                style={{
-                  color: '#fff',
-                  margin: 0,
-                  fontSize: '18px',
-                  fontFamily: '"Google Sans", sans-serif'
-                }}
-              >
-                ❌ Error: {desc.error}
-              </p>
+              <p className="component-error-text">❌ Error: {desc.error}</p>
             ) : desc?.description ? (
               typeof desc.description === 'string' ? (
-                <p
-                  style={{
-                    color: 'rgba(255,255,255,0.9)',
-                    margin: 0,
-                    lineHeight: '1.8',
-                    whiteSpace: 'pre-wrap',
-                    fontSize: '18px',
-                    fontFamily: '"Google Sans", sans-serif'
-                  }}
-                >
-                  {desc.description}
-                </p>
+                <p className="component-body-text-pre">{desc.description}</p>
               ) : (
                 <div>
                   {Object.entries(desc.description as StructuredSectionDescription).map(([header, body]) => (
-                    <div key={header} style={{ marginBottom: '24px' }}>
-                      <h3
-                        style={{
-                          margin: 0,
-                          marginBottom: '12px',
-                          color: '#fff',
-                          fontSize: '20px',
-                          fontWeight: 600,
-                          fontFamily: '"Google Sans", sans-serif'
-                        }}
-                      >
-                        {header}
-                      </h3>
-                      <p
-                        style={{
-                          margin: 0,
-                          color: 'rgba(255,255,255,0.9)',
-                          lineHeight: '1.8',
-                          fontSize: '18px',
-                          fontFamily: '"Google Sans", sans-serif'
-                        }}
-                      >
-                        {body}
-                      </p>
+                    <div key={header} className="component-margin-bottom-sm">
+                      <h3 className="component-heading-4">{header}</h3>
+                      <p className="component-body-text">{body}</p>
                     </div>
                   ))}
                 </div>

@@ -1,4 +1,5 @@
 import type { AggregatedResults } from '../types'
+import './components.css'
 
 interface AnalysisResultsSummaryProps {
   results: AggregatedResults
@@ -18,143 +19,33 @@ export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResul
   }
 
   return (
-    <div
-      style={{
-        display: 'inline-flex',
-        padding: '12px 20px',
-        backgroundColor: 'transparent',
-        borderRadius: '12px',
-        borderLeft: '4px solid rgba(255, 255, 255, 0.3)',
-        marginBottom: '8px',
-        gap: '20px',
-        flexWrap: 'wrap',
-        alignItems: 'center'
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontFamily: '"Google Sans", sans-serif'
-        }}
-      >
-        <span
-          style={{
-            fontSize: '12px',
-            color: 'rgba(255, 255, 255, 0.6)',
-            fontWeight: 400,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-          }}
-        >
-          Collision:
-        </span>
-        <span
-          style={{
-            fontSize: '16px',
-            fontWeight: 600,
-            color: '#fff',
-            fontFamily: '"Google Sans", sans-serif'
-          }}
-        >
-          {results.medianTime.toFixed(1)}s
-        </span>
+    <div className="component-pill">
+      <div className="stat-item">
+        <span className="stat-item-label">Collision:</span>
+        <span className="stat-item-value">{results.medianTime.toFixed(1)}s</span>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontFamily: '"Google Sans", sans-serif'
-        }}
-      >
-        <span
-          style={{
-            fontSize: '12px',
-            color: 'rgba(255, 255, 255, 0.6)',
-            fontWeight: 400,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-          }}
-        >
-          Window:
-        </span>
-        <span
-          style={{
-            fontSize: '16px',
-            fontWeight: 600,
-            color: '#fff',
-            fontFamily: '"Google Sans", sans-serif'
-          }}
-        >
+      <div className="stat-item">
+        <span className="stat-item-label">Window:</span>
+        <span className="stat-item-value">
           {results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s
         </span>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontFamily: '"Google Sans", sans-serif'
-        }}
-      >
+      <div className="stat-item">
+        <span className="stat-item-label">Perspective:</span>
         <span
-          style={{
-            fontSize: '12px',
-            color: 'rgba(255, 255, 255, 0.6)',
-            fontWeight: 400,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-          }}
-        >
-          Perspective:
-        </span>
-        <span
-          style={{
-            fontSize: '16px',
-            fontWeight: 600,
-            color: getPerspectiveColor(results.detectedFault),
-            fontFamily: '"Google Sans", sans-serif',
-            textTransform: 'capitalize'
-          }}
+          className="stat-item-value-colored"
+          style={{ color: getPerspectiveColor(results.detectedFault) }}
         >
           {results.detectedFault}
         </span>
       </div>
 
       {videoDuration && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontFamily: '"Google Sans", sans-serif'
-          }}
-        >
-          <span
-            style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
-              fontWeight: 400,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}
-          >
-            Duration:
-          </span>
-          <span
-            style={{
-              fontSize: '16px',
-              fontWeight: 600,
-              color: '#fff',
-              fontFamily: '"Google Sans", sans-serif'
-            }}
-          >
-            {videoDuration.toFixed(1)}s
-          </span>
+        <div className="stat-item">
+          <span className="stat-item-label">Duration:</span>
+          <span className="stat-item-value">{videoDuration.toFixed(1)}s</span>
         </div>
       )}
     </div>

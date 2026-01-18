@@ -1,5 +1,6 @@
 import type { VideoSection, SectionDescription } from '../types'
 import { SectionDescriptions } from './SectionDescriptions'
+import './components.css'
 
 interface SectionAnalyzerProps {
   sections: VideoSection[] | null
@@ -57,28 +58,12 @@ export function SectionAnalyzer({
           <div className="section-analyzer-content">
             <h1
               className="section-analysis-title"
-              style={{
-                fontSize: '48px',
-                fontWeight: 700,
-                color: perspectiveColor,
-                fontFamily: '"Google Sans", sans-serif',
-                margin: 0,
-                marginBottom: '20px'
-              }}
+              style={{ color: perspectiveColor }}
             >
               Section Analysis
             </h1>
             {showLoading && (
-              <p
-                style={{
-                  fontSize: '18px',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontFamily: '"Google Sans", sans-serif',
-                  margin: 0
-                }}
-              >
-                ⏳ Analyzing sections...
-              </p>
+              <p className="component-loading-text">⏳ Analyzing sections...</p>
             )}
           </div>
         </div>

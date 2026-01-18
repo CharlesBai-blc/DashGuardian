@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import type { AggregatedResults, VideoSection } from '../types'
 import { AnalysisResultsSummary } from './AnalysisResultsSummary'
+import './components.css'
 
 interface AnalysisPanelProps {
   selectedFile: File | null
@@ -130,9 +131,9 @@ export function AnalysisPanel({
   // Empty state: no file selected
   if (!selectedFile) {
     return (
-      <div style={{ padding: '30px' }}>
+      <div className="component-padding">
         <div className="title">Dashcam Analyzer</div>
-        <div className="text" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+        <div className="text component-text-light">
           Upload a dashcam video to begin analysis
         </div>
       </div>
@@ -142,53 +143,31 @@ export function AnalysisPanel({
   // File selected but no results yet
   if (!results) {
     return (
-      <div style={{ padding: '30px' }}>
+      <div className="component-padding">
         <div className="title">Dashcam Analyzer</div>
         <div className="text">
           Video loaded and ready for analysis. Click the button below to detect collision events.
         </div>
-        <div style={{ margin: '30px' }}>
+        <div className="component-margin-top-lg">
           <button
             onClick={onAnalyze}
             disabled={isLoading}
-            style={{
-              padding: '15px 30px',
-              fontSize: '16px',
-              fontWeight: 600,
-              backgroundColor: isLoading ? '#555' : '#fff',
-              color: '#000',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '8px',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              fontFamily: '"Google Sans", sans-serif',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
-            }}
+            className="component-button"
           >
             {isLoading ? 'Analyzing video...' : 'Analyze Video'}
           </button>
           
           {showProgress && (
             <div
+              className="progress-bar-container component-margin-top"
               style={{
-                marginTop: '15px',
-                width: '100%',
-                height: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '2px',
-                overflow: 'hidden',
                 opacity: progress >= 100 ? 0 : 1,
                 transition: progress >= 100 ? 'opacity 0.5s ease-out' : 'none'
               }}
             >
               <div
-                style={{
-                  width: `${progress}%`,
-                  height: '100%',
-                  backgroundColor: '#fff',
-                  borderRadius: '2px',
-                  transition: 'width 0.2s ease-out'
-                }}
+                className="progress-bar-fill"
+                style={{ width: `${progress}%` }}
               />
             </div>
           )}
@@ -199,66 +178,22 @@ export function AnalysisPanel({
 
   // Results available - single page summary
   return (
-    <div
-      className="analysis-panel-scrollable"
-      style={{
-        height: '100%',
-        overflowY: 'auto',
-        padding: '30px'
-      }}
-    >
-      <div className="title" style={{ margin: 0, marginBottom: '20px' }}>
-        Analysis Results
-      </div>
+    <div className="analysis-panel-scrollable component-scrollable">
+      <div className="title title-override">Analysis Results</div>
 
       <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
 
       {/* Summary Text - Only show when both timing info and summary are ready */}
       {results.summary && (
-        <div
-          style={{
-            marginTop: '5px',
-            marginBottom: '30px',
-            padding: '20px',
-            backgroundColor: 'transparent',
-            borderRadius: '12px',
-            borderLeft: '4px solid rgba(255, 255, 255, 0.3)'
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '15px',
-              color: '#fff',
-              fontFamily: '"Google Sans", sans-serif',
-              fontSize: '24px',
-              fontWeight: 600
-            }}
-          >
-            Incident Summary
-          </h3>
-          <ul
-            style={{
-              margin: 0,
-              paddingLeft: '20px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontFamily: '"Google Sans", sans-serif',
-              fontSize: '16px',
-              lineHeight: '1.8',
-              listStyleType: 'disc'
-            }}
-          >
+        <div className="component-card component-margin-top-xs" style={{ marginBottom: '30px' }}>
+          <h3 className="component-heading-3">Incident Summary</h3>
+          <ul className="component-list">
             {results.summary
               .split(/[.!?]+/)
               .map((sentence) => sentence.trim())
               .filter((sentence) => sentence.length > 0)
               .map((sentence, index) => (
-                <li
-                  key={index}
-                  style={{
-                    marginBottom: '8px'
-                  }}
-                >
+                <li key={index} className="component-list-item">
                   {sentence}
                 </li>
               ))}
@@ -268,42 +203,18 @@ export function AnalysisPanel({
 
       {/* Section Analysis Progress Bar */}
       {showSectionProgress && (
-        <div
-          style={{
-            marginTop: '10px',
-            marginBottom: '20px'
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              marginBottom: '8px',
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '14px',
-              fontFamily: '"Google Sans", sans-serif'
-            }}
-          >
-            (section analysis in progress)
-          </p>
+        <div className="component-margin-top-sm" style={{ marginBottom: '20px' }}>
+          <p className="component-progress-label">(section analysis in progress)</p>
           <div
+            className="progress-bar-container"
             style={{
-              width: '100%',
-              height: '4px',
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              borderRadius: '2px',
-              overflow: 'hidden',
               opacity: sectionProgress >= 100 ? 0 : 1,
               transition: sectionProgress >= 100 ? 'opacity 0.5s ease-out' : 'none'
             }}
           >
             <div
-              style={{
-                width: `${sectionProgress}%`,
-                height: '100%',
-                backgroundColor: '#fff',
-                borderRadius: '2px',
-                transition: 'width 0.2s ease-out'
-              }}
+              className="progress-bar-fill"
+              style={{ width: `${sectionProgress}%` }}
             />
           </div>
         </div>
