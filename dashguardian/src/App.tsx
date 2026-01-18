@@ -3,7 +3,7 @@ import './App.css'
 import { AnalyzePage } from './AnalyzePage'
 import { InfoPage } from './InfoPage'
 
-const brollVideos = ['/broll1.mp4', '/broll2.mp4', '/broll3.mp4', '/broll4.mp4', '/broll5.mp4']
+const brollVideos = ['/broll1.mp4', '/broll2.mp4'/*, '/broll3.mp4', '/broll4.mp4', '/broll5.mp4'*/]
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
@@ -63,7 +63,7 @@ function App() {
     if (!video || currentPage !== 'home') return
 
     const handleVideoEnd = () => {
-      setCurrentVideoIndex((prev) => (prev) % brollVideos.length)
+      setCurrentVideoIndex((prev) => (prev+1) % brollVideos.length)
     }
 
     video.addEventListener('ended', handleVideoEnd)
