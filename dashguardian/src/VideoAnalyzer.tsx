@@ -60,7 +60,7 @@ export function VideoAnalyzer() {
   const handleDescribeSections = useCallback(async () => {
     if (!sections || !selectedFile || !results) return
 
-    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
     if (!apiKey) {
       console.error('API key not configured')
       return
@@ -130,10 +130,10 @@ export function VideoAnalyzer() {
       setResults(null)
       setSectionDescriptions([])
       hasAutoTriggered.current = false
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY
       if (!apiKey) {
         throw new Error(
-          'OpenRouter API key is not configured. Please set VITE_OPENROUTER_API_KEY in your .env file.'
+          'Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your .env file.'
         )
       }
 

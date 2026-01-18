@@ -2,8 +2,43 @@ import type { AnalysisResult, VideoSection, PromptConfig, PromptsData, Structure
 import promptsData from '../prompts.json'
 import { parseJsonResponse } from '../utils'
 
-const API_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
-const MODEL = 'google/gemini-3-flash-preview'
+const MODEL = 'gemini-3-flash-preview'
+
+// Helper to build Gemini API URL
+const getGeminiUrl = (apiKey: string) => 
+  `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`
+
+// Helper to extract raw base64 from data URI
+const extractBase64 = (dataUri: string): string => {
+  const match = dataUri.match(/^data:video\/\w+;base64,(.+)$/)
+  return match ? match[1] : dataUri
+}
+
+// Helper to get mime type from data URI
+const getMimeType = (dataUri: string): string => {
+  const match = dataUri.match(/^data:(video\/\w+);base64,/)
+  return match ? match[1] : 'video/mp4'
+}
+
+// Gemini API response type
+interface GeminiResponse {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{
+        text?: string
+      }>
+    }
+  }>
+  error?: {
+    message: string
+    code: number
+  }
+}
+
+// Helper to extract content from Gemini response
+const extractGeminiContent = (data: GeminiResponse): string | null => {
+  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null
+}
 
 const ANALYSIS_PROMPT = `Watch the entire video carefully. Your task is to objectively analyze the incident and determine the POV vehicle's role.
 
@@ -48,37 +83,37 @@ export const makeAnalysisCall = async (
   apiKey: string
 ): Promise<AnalysisResult | null> => {
   try {
-    const response = await fetch(API_BASE_URL, {
+    const response = await fetch(getGeminiUrl(apiKey), {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: MODEL,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: ANALYSIS_PROMPT
-              },
-              {
-                type: 'video_url',
-                video_url: {
-                  url: base64Video
-                }
+        contents: [{
+          parts: [
+            { text: ANALYSIS_PROMPT },
+            {
+              inlineData: {
+                mimeType: getMimeType(base64Video),
+                data: extractBase64(base64Video)
               }
-            ]
-          }
-        ]
+            }
+          ]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json'
+        }
       })
     })
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content?.trim()
+    
+    if (data.error) {
+      console.error('Gemini API error:', data.error)
+      return null
+    }
+    
+    const content = extractGeminiContent(data)
     console.log('Raw API response:', content)
     if (content) {
       return parseJsonResponse(content)
@@ -105,37 +140,37 @@ export const describeSectionCall = async (
     .replace('{{end}}', section.end.toFixed(1))
 
   try {
-    const response = await fetch(API_BASE_URL, {
+    const response = await fetch(getGeminiUrl(apiKey), {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: MODEL,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: finalPrompt
-              },
-              {
-                type: 'video_url',
-                video_url: {
-                  url: base64Video
-                }
+        contents: [{
+          parts: [
+            { text: finalPrompt },
+            {
+              inlineData: {
+                mimeType: getMimeType(base64Video),
+                data: extractBase64(base64Video)
               }
-            ]
-          }
-        ]
+            }
+          ]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json'
+        }
       })
     })
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content?.trim()
+    
+    if (data.error) {
+      console.error(`Gemini API error for ${section.name}:`, data.error)
+      return {}
+    }
+    
+    const content = extractGeminiContent(data)
     console.log(`${section.name} description:`, content)
     
     if (content) {
@@ -180,36 +215,34 @@ export const generateVideoSummary = async (
   apiKey: string
 ): Promise<string> => {
   try {
-    const response = await fetch(API_BASE_URL, {
+    const response = await fetch(getGeminiUrl(apiKey), {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: SUMMARY_PROMPT
-              },
-              {
-                type: 'video_url',
-                video_url: {
-                  url: base64Video
-                }
+        contents: [{
+          parts: [
+            { text: SUMMARY_PROMPT },
+            {
+              inlineData: {
+                mimeType: getMimeType(base64Video),
+                data: extractBase64(base64Video)
               }
-            ]
-          }
-        ]
+            }
+          ]
+        }]
       })
     })
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content?.trim()
+    
+    if (data.error) {
+      console.error('Gemini API error:', data.error)
+      return 'Summary not available'
+    }
+    
+    const content = extractGeminiContent(data)
     console.log('Video summary:', content)
     return content || 'Summary not available'
   } catch (error) {
