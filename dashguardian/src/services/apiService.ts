@@ -5,35 +5,41 @@ import { parseJsonResponse } from '../utils'
 const API_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const MODEL = 'google/gemini-3-flash-preview'
 
-const ANALYSIS_PROMPT = `Watch the entire video. Identify the first physical contact (collision) using this definition: first frame where bodies touch. Consider sudden and heavy camera movement as a very clear indication of collision.
+const ANALYSIS_PROMPT = `Watch the entire video carefully. Your task is to objectively analyze the incident and determine the POV vehicle's role.
 
-Identify who is at fault or the POV vehicle's role. Be very careful to analyze the POV vehicle's actions leading up to the collision:
+**Step 1: Identify the collision moment**
+Find the first frame where physical contact occurs between vehicles. Look for:
+- Visual contact between vehicles
+- Sudden camera movement or jolt indicating impact
+- Change in vehicle trajectories at the moment of contact
 
-**"victim"** - POV vehicle was hit by another vehicle that was at fault:
-- POV vehicle was rear-ended while stopped or moving at constant speed
-- POV vehicle was hit by someone running a red light or stop sign
-- POV vehicle was sideswiped by someone changing lanes unsafely
-- POV vehicle was hit from the side by someone failing to yield
-- POV vehicle was legally proceeding when another vehicle caused the collision
-- POV vehicle was severely braked-checked by the other vehicle for no reason
+**Step 2: Analyze vehicle actions objectively**
+Examine the actions of ALL vehicles involved in the moments leading up to the collision:
+- What was each vehicle doing? (speed, direction, lane position, signaling)
+- Did any vehicle violate traffic rules or right-of-way?
+- Were there any evasive actions attempted?
+- What was the sequence of events that led to contact?
 
-**"offender"** - POV vehicle caused the crash or violated traffic rules:
-- POV vehicle rear-ended the vehicle in front (following too closely, not braking in time, or distracted)
-- POV vehicle ran a red light or stop sign and struck another vehicle
-- POV vehicle failed to yield and struck another vehicle
-- POV vehicle changed lanes unsafely and struck another vehicle
-- POV vehicle was speeding or driving aggressively and caused the collision
-- POV vehicle struck a stationary or slower-moving vehicle from behind
-- IMPORTANT: If the POV vehicle's front end strikes another vehicle's rear end, the POV vehicle is almost always the offender
+**Step 3: Determine the POV vehicle's role**
+Based on your objective analysis, classify the POV vehicle's role:
 
-**"witness"** - POV vehicle was not involved in the collision:
-- POV vehicle observed a collision between other vehicles
-- POV vehicle was nearby but did not make contact with any vehicle
+**"victim"** - The POV vehicle was struck by another vehicle whose actions caused the collision OR the POV vehicle was unable to avoid the collision due to the other vehicle's actions. The other party's behavior (failure to yield, running signals, unsafe maneuvers, etc.) directly led to the impact.
 
-Return ONLY JSON with:
-- approx_t_s (seconds from start, to nearest 0.1s)
-- window_s as [start, end] (a 2–4 second window that definitely contains first contact)
-- fault ("victim", "offender", or "witness")
+**"offender"** - The POV vehicle's actions (aggressive driving, speed, following distance, failure to yield, rule violations, etc.) directly caused or contributed to the collision. The POV vehicle initiated contact or failed to avoid a preventable collision.
+
+**"witness"** - The POV vehicle was not involved in the collision. It observed an incident between other vehicles without making contact.
+
+**Important principles:**
+- Base your classification on observed evidence, not assumptions
+- Consider the sequence of events and which vehicle's actions initiated the collision
+- Analyze right-of-way, traffic signals, and applicable traffic rules
+- Consider whether the collision was preventable and by which party
+- Be objective: avoid bias toward any particular classification
+
+Return ONLY valid JSON with:
+- approx_t_s: The collision time in seconds from video start (to nearest 0.1s)
+- window_s: A 2-4 second time window [start, end] that definitely contains the first contact
+- fault: One of "victim", "offender", or "witness" based on your objective analysis
 
 Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0], "fault": "offender"}`
 
