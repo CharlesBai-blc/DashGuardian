@@ -282,12 +282,13 @@
   align-items: center;
   text-align: center;
   flex-direction: column;
-  background-color: rgba(150,150,150,.1);
+  background-color: rgba(150,150,150,.0);
+  opacity: .7;
   transition:.3s;
 }
 .upload:hover {
-  background-color: rgba(150,150,150,.05);
-  opacity: .7;
+  background-color: rgba(150,150,150,.1);
+  opacity: 1;
 }
 
 #uploadIcon {
