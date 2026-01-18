@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import type { AggregatedResults, VideoSection } from '../types'
 import { AnalysisResultsSummary } from './AnalysisResultsSummary'
-import './components.css'
+import '../App.css'
 
 interface AnalysisPanelProps {
   selectedFile: File | null
@@ -133,8 +133,8 @@ export function AnalysisPanel({
     return (
       <div className="component-padding">
         <div className="title">Dashcam Analyzer</div>
-        <div className="text component-text-light">
-          Upload a dashcam video to begin analysis
+        <div className="text">
+          Upload a Dashcam Video!
         </div>
       </div>
     )
@@ -148,30 +148,25 @@ export function AnalysisPanel({
         <div className="text">
           Video loaded and ready for analysis. Click the button below to detect collision events.
         </div>
-        <div className="component-margin-top-lg">
-          <button
-            onClick={onAnalyze}
-            disabled={isLoading}
-            className="component-button"
+
+        <a onClick={onAnalyze} className="analyzeButton">
+          {isLoading ? 'Analyzing video...' : 'Analyze Video'}
+        </a>
+        
+        {showProgress && (
+          <div
+            className="progress-bar-container component-margin-top"
+            style={{
+              opacity: progress >= 100 ? 0 : 1,
+              transition: progress >= 100 ? 'opacity 0.5s ease-out' : 'none'
+            }}
           >
-            {isLoading ? 'Analyzing video...' : 'Analyze Video'}
-          </button>
-          
-          {showProgress && (
             <div
-              className="progress-bar-container component-margin-top"
-              style={{
-                opacity: progress >= 100 ? 0 : 1,
-                transition: progress >= 100 ? 'opacity 0.5s ease-out' : 'none'
-              }}
-            >
-              <div
-                className="progress-bar-fill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          )}
-        </div>
+              className="progress-bar-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
       </div>
     )
   }

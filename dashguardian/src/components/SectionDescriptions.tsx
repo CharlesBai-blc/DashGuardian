@@ -1,5 +1,5 @@
 import type { VideoSection, SectionDescription, StructuredSectionDescription } from '../types'
-import './components.css'
+import '../App.css'
 
 interface SectionDescriptionsProps {
   sections: VideoSection[]

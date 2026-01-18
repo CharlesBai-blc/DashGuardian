@@ -1,6 +1,6 @@
 import type { VideoSection, SectionDescription } from '../types'
 import { SectionDescriptions } from './SectionDescriptions'
-import './components.css'
+import '../App.css'
 
 interface SectionAnalyzerProps {
   sections: VideoSection[] | null

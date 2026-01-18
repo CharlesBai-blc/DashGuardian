@@ -1,5 +1,5 @@
 import type { AggregatedResults } from '../types'
-import './components.css'
+import '../App.css'
 
 interface AnalysisResultsSummaryProps {
   results: AggregatedResults
