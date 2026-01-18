@@ -85,6 +85,15 @@
   margin-bottom:0;
 }
 
+.header {
+  color: #fff;
+  font-weight: 600;
+  font-size: 24px;
+  font-family: "Google Sans", sans-serif;
+  margin:30px;
+  margin-bottom:0;
+}
+
 .text {
   color: #fff;
   font-weight: 400;
@@ -93,7 +102,45 @@
   margin: 30px;
   margin-top: 15px;
   margin-bottom: 0;
-  z-index: 1;
+}
+
+.analyzeButton {
+  position: absolute;
+  color: rgb(20,20,20);
+  font-weight: 500;
+  font-size: 16px;
+  font-family: "Google Sans", sans-serif;
+
+  width: calc(100% - 60px);
+  height: 50px;
+  background-color: #fff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin:30px;
+
+  border-radius: 10px;
+}
+
+.progressBar {
+  width: calc(100% - 60px);
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  margin:30px;
+  margin-top: 120px;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: #fff;
+  transition: width 0.2s ease-out;
+}
+
+.progressBarFade {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
 }
 
 #top {
@@ -148,7 +195,7 @@
   height: calc(100% - 70px);
   top: 70px;
   overflow-y: auto;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y mandatory; */
   scroll-behavior: smooth;
   /* Custom scrollbar styling */
   scrollbar-width: thin;
@@ -177,7 +224,7 @@
 .analyzer-top-section {
   position: relative;
   width: 100%;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh);
   display: flex;
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -186,22 +233,17 @@
 #left {
   position: relative;
   width: 70%;
-  min-height: calc(100vh - 70px);
+  max-height: calc(100vh - 70px);
   background-color: #000;
+  overflow-y: auto;
 }
 
 #right {
   position: relative;
   width: 30%;
-  min-height: calc(100vh - 70px);
-  overflow: hidden;
-}
-
-.analyzeButton {
-  position: relative;
-  width: 100%;
-  height: 20px;
-  background-color: rgba(100,100,100,.5);
+  max-height: calc(100vh - 70px);
+  /* overflow: hidden; */
+  overflow-y: auto;
 }
 
 /* Custom scrollbar for AnalysisPanel scrollable content */

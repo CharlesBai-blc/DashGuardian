@@ -143,26 +143,29 @@ export function AnalysisPanel({
   // File selected but no results yet
   if (!results) {
     return (
-      <div className="component-padding">
+      <div className="">
         <div className="title">Dashcam Analyzer</div>
         <div className="text">
           Video loaded and ready for analysis. Click the button below to detect collision events.
         </div>
 
+        
         <a onClick={onAnalyze} className="analyzeButton">
           {isLoading ? 'Analyzing video...' : 'Analyze Video'}
         </a>
         
+        
+        
         {showProgress && (
           <div
-            className="progress-bar-container component-margin-top"
+            className="progressBar"
             style={{
               opacity: progress >= 100 ? 0 : 1,
               transition: progress >= 100 ? 'opacity 0.5s ease-out' : 'none'
             }}
           >
             <div
-              className="progress-bar-fill"
+              className="progressBarFill"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -173,42 +176,40 @@ export function AnalysisPanel({
 
   // Results available - single page summary
   return (
-    <div className="analysis-panel-scrollable component-scrollable">
-      <div className="title title-override">Analysis Results</div>
+    <div className="">
+      <div className="title">Analysis Results</div>
 
       <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
 
       {/* Summary Text - Only show when both timing info and summary are ready */}
       {results.summary && (
-        <div className="component-card component-margin-top-xs" style={{ marginBottom: '30px' }}>
-          <h3 className="component-heading-3">Incident Summary</h3>
-          <ul className="component-list">
+        <div className="header" style={{ marginBottom: '30px' }}>
+          <div className="">Incident Summary</div>
             {results.summary
               .split(/[.!?]+/)
               .map((sentence) => sentence.trim())
               .filter((sentence) => sentence.length > 0)
               .map((sentence, index) => (
-                <li key={index} className="component-list-item">
+                <li key={index} className="text">
                   {sentence}
                 </li>
-              ))}
-          </ul>
+              ))} 
         </div>
       )}
 
       {/* Section Analysis Progress Bar */}
       {showSectionProgress && (
-        <div className="component-margin-top-sm" style={{ marginBottom: '20px' }}>
-          <p className="component-progress-label">(section analysis in progress)</p>
+        <div className="" style={{ marginBottom: '20px' }}>
+          <p className="text">(section analysis in progress)</p>
           <div
-            className="progress-bar-container"
+            className="progressBar"
             style={{
               opacity: sectionProgress >= 100 ? 0 : 1,
               transition: sectionProgress >= 100 ? 'opacity 0.5s ease-out' : 'none'
             }}
           >
             <div
-              className="progress-bar-fill"
+              className="progressBarFill"
               style={{ width: `${sectionProgress}%` }}
             />
           </div>
