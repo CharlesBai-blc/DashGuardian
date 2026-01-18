@@ -14,6 +14,13 @@ interface VideoSection {
   duration: number
 }
 
+interface SectionDescription {
+  section: 'ante' | 'event' | 'post'
+  description: string
+  isLoading: boolean
+  error?: string
+}
+
 interface AggregatedResults {
   individualResults: AnalysisResult[]
   medianTime: number
@@ -26,7 +33,10 @@ export function VideoAnalyzer() {
   const [results, setResults] = useState<AggregatedResults | null>(null)
   const [videoDuration, setVideoDuration] = useState<number | null>(null)
   const [sections, setSections] = useState<VideoSection[] | null>(null)
+  const [sectionDescriptions, setSectionDescriptions] = useState<SectionDescription[]>([])
+  const [isDescribing, setIsDescribing] = useState(false)
   const hiddenVideoRef = useRef<HTMLVideoElement>(null)
+  const [base64VideoCache, setBase64VideoCache] = useState<string | null>(null)
 
   // Get video duration when file changes
   useEffect(() => {
@@ -88,6 +98,8 @@ export function VideoAnalyzer() {
       setSelectedFile(file);
       setResults(null);
       setSections(null);
+      setSectionDescriptions([]);
+      setBase64VideoCache(null);
     }
   };
 
@@ -141,7 +153,7 @@ export function VideoAnalyzer() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "allenai/molmo-2-8b:free",
+          "model": "google/gemini-3-flash-preview",
           "response_format": { "type": "json_object" },
           "messages": [
             {
@@ -182,6 +194,130 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
     }
   };
 
+  const describeSectionCall = async (
+    base64Video: string, 
+    apiKey: string, 
+    section: VideoSection
+  ): Promise<string> => {
+    const sectionPrompts = {
+      ante: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "ANTE" period - before any collision).
+
+Describe what you see in this section:
+- Road conditions and environment
+- Traffic situation
+- Driver behavior and vehicle movement
+- Any potential hazards or warning signs
+- Weather and visibility
+
+Be concise but thorough. This is the period BEFORE the main event.`,
+      
+      event: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "EVENT" period - the collision/incident).
+
+Describe what you see in this critical section:
+- What exactly happened in the collision/incident
+- Which vehicles/objects were involved
+- Point of impact and collision dynamics
+- Any evasive actions taken
+- Immediate aftermath
+
+Be detailed and precise. This is the MOST IMPORTANT section capturing the actual incident.`,
+      
+      post: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "POST" period - after the collision).
+
+Describe what you see in this section:
+- Aftermath of the incident
+- Vehicle positions after impact
+- Any secondary events
+- Response actions (stopping, pulling over, etc.)
+- Final state of the scene
+
+Be concise but thorough. This is the period AFTER the main event.`
+    };
+
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "model": "allenai/molmo-2-8b:free",
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": sectionPrompts[section.name]
+                },
+                {
+                  "type": "video_url",
+                  "video_url": {
+                    "url": base64Video
+                  }
+                }
+              ]
+            }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content?.trim();
+      console.log(`${section.name} description:`, content);
+      return content || "No description available";
+    } catch (error) {
+      console.error(`Error describing ${section.name}:`, error);
+      throw error;
+    }
+  };
+
+  const handleDescribeSections = async () => {
+    if (!sections || !selectedFile) return;
+
+    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    if (!apiKey) {
+      console.error("API key not configured");
+      return;
+    }
+
+    setIsDescribing(true);
+    
+    // Initialize descriptions with loading state
+    setSectionDescriptions(
+      sections.map(s => ({
+        section: s.name,
+        description: '',
+        isLoading: true
+      }))
+    );
+
+    try {
+      // Use cached base64 or convert
+      let base64Video = base64VideoCache;
+      if (!base64Video) {
+        base64Video = await convertFileToBase64(selectedFile);
+        setBase64VideoCache(base64Video);
+      }
+
+      // Make parallel calls for all sections
+      console.log("Describing all 3 sections in parallel...");
+      const promises = sections.map(section => 
+        describeSectionCall(base64Video!, apiKey, section)
+          .then(description => ({ section: section.name, description, isLoading: false }))
+          .catch(error => ({ section: section.name, description: '', isLoading: false, error: error.message }))
+      );
+
+      const results = await Promise.all(promises);
+      setSectionDescriptions(results as SectionDescription[]);
+    } catch (error) {
+      console.error("Error describing sections:", error);
+    } finally {
+      setIsDescribing(false);
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!selectedFile) {
       console.error("Please select a video file first");
@@ -191,13 +327,15 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
     try {
       setIsLoading(true);
       setResults(null);
+      setSectionDescriptions([]);
       const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
       if (!apiKey) {
         throw new Error("OpenRouter API key is not configured. Please set VITE_OPENROUTER_API_KEY in your .env file.");
       }
 
-      // Convert file to base64
+      // Convert file to base64 and cache it
       const base64Video = await convertFileToBase64(selectedFile);
+      setBase64VideoCache(base64Video);
 
       // Make 8 parallel API calls
       console.log("Making 8 parallel API calls...");
@@ -348,6 +486,105 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
                     })}
                   </tbody>
                 </table>
+
+                {/* Describe Sections Button */}
+                <button
+                  onClick={handleDescribeSections}
+                  disabled={isDescribing}
+                  style={{
+                    marginTop: '15px',
+                    padding: '10px 20px',
+                    backgroundColor: '#7c4dff',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: isDescribing ? 'not-allowed' : 'pointer',
+                    opacity: isDescribing ? 0.7 : 1,
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {isDescribing ? '⏳ Describing Sections...' : '🔍 Describe All Sections'}
+                </button>
+
+                {/* Section Descriptions */}
+                {sectionDescriptions.length > 0 && (
+                  <div style={{ marginTop: '20px' }}>
+                    <h4 style={{ marginBottom: '15px', color: 'inherit' }}>Section Descriptions</h4>
+                    {sections.map((section) => {
+                      const desc = sectionDescriptions.find(d => d.section === section.name);
+                      const borderColors = {
+                        ante: '#1e88e5',
+                        event: '#e53935',
+                        post: '#43a047'
+                      };
+                      const bgColors = {
+                        ante: 'rgba(30, 136, 229, 0.1)',
+                        event: 'rgba(229, 57, 53, 0.1)',
+                        post: 'rgba(67, 160, 71, 0.1)'
+                      };
+                      const headerColors = {
+                        ante: '#64b5f6',
+                        event: '#ef5350',
+                        post: '#81c784'
+                      };
+                      
+                      return (
+                        <div
+                          key={section.name}
+                          style={{
+                            marginBottom: '15px',
+                            padding: '15px',
+                            backgroundColor: bgColors[section.name],
+                            borderLeft: `4px solid ${borderColors[section.name]}`,
+                            borderRadius: '0 8px 8px 0'
+                          }}
+                        >
+                          <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            marginBottom: '10px'
+                          }}>
+                            <h5 style={{ 
+                              margin: 0, 
+                              color: headerColors[section.name],
+                              fontSize: '1.1em'
+                            }}>
+                              {section.name === 'event' ? '⚡ ' : ''}{section.label}
+                              <span style={{ 
+                                fontWeight: 'normal', 
+                                fontSize: '0.85em', 
+                                color: 'rgba(255,255,255,0.5)',
+                                marginLeft: '10px'
+                              }}>
+                                ({section.start.toFixed(1)}s - {section.end.toFixed(1)}s)
+                              </span>
+                            </h5>
+                          </div>
+                          
+                          {desc?.isLoading ? (
+                            <p style={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic', margin: 0 }}>
+                              ⏳ Analyzing this section...
+                            </p>
+                          ) : desc?.error ? (
+                            <p style={{ color: '#ef5350', margin: 0 }}>
+                              ❌ Error: {desc.error}
+                            </p>
+                          ) : desc?.description ? (
+                            <p style={{ 
+                              color: 'rgba(255,255,255,0.9)', 
+                              margin: 0,
+                              lineHeight: '1.6',
+                              whiteSpace: 'pre-wrap'
+                            }}>
+                              {desc.description}
+                            </p>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
             
