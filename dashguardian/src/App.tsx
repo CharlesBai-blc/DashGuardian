@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { AnalyzePage } from './AnalyzePage'
-import { InfoPage } from './InfoPage'
+import { MissionPage } from './components/MissionPage'
+import { HelpPage1 } from './components/HelpPage1'
+import { HelpPage2 } from './components/HelpPage2'
+import { HelpPage3 } from './components/HelpPage3'
 
-const brollVideos = ['/broll1.mp4', '/broll2.mp4', '/broll3.mp4', '/broll4.mp4', '/broll5.mp4']
+const brollVideos = ['/broll1.mp4', '/broll2.mp4'/*, '/broll3.mp4', '/broll4.mp4', '/broll5.mp4'*/]
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
@@ -63,7 +66,7 @@ function App() {
     if (!video || currentPage !== 'home') return
 
     const handleVideoEnd = () => {
-      setCurrentVideoIndex((prev) => (prev) % brollVideos.length)
+      setCurrentVideoIndex((prev) => (prev+1) % brollVideos.length)
     }
 
     video.addEventListener('ended', handleVideoEnd)
@@ -116,7 +119,10 @@ function App() {
             Start Analyzing
           </button>
         </div>
-        <InfoPage />
+        <MissionPage />
+        <HelpPage1 />
+        <HelpPage2 />
+        <HelpPage3 />
       </div>
     </div>
   )
