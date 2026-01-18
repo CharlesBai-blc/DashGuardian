@@ -38,7 +38,7 @@ export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) 
 
   // After upload: show VideoPlayer
   return (
-    <div className="component-full-size">
+    <div className="">
       <VideoPlayer file={selectedFile} />
     </div>
   )

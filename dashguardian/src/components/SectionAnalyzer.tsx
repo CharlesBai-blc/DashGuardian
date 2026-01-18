@@ -18,11 +18,11 @@ export function SectionAnalyzer({
   const getPerspectiveColor = (fault?: string) => {
     switch (fault) {
       case 'offender':
-        return '#ef5350'
+        return '#ed7674'
       case 'witness':
-        return '#7c4dff'
+        return '#9f92c3'
       default:
-        return '#64b5f6'
+        return '#90b9db'
     }
   }
 
@@ -51,44 +51,24 @@ export function SectionAnalyzer({
   const perspectiveColor = getPerspectiveColor(detectedFault)
 
   return (
-    <div className="section-analyzer">
-      <div className="section-analyzer-scroll-container">
-        {/* Header Page */}
-        <div className="section-analyzer-page section-analyzer-header">
-          <div className="section-analyzer-content">
-            <h1
-              className="section-analysis-title"
-              style={{ color: perspectiveColor }}
-            >
-              Section Analysis
-            </h1>
-            {showLoading && (
-              <p className="component-loading-text">⏳ Analyzing sections...</p>
-            )}
-          </div>
-        </div>
+    <div className="title">
+      <div className="title">Section Analysis</div>
+      {showLoading && (<p className="text">Analyzing sections...</p>)}
 
-        {/* Individual Section Pages - Only show when all descriptions are complete */}
-        {hasAllDescriptions &&
-          sections.map((section) => {
-            const desc = sectionDescriptions.find((d) => d.section === section.name)
-            if (!desc) return null
+      {hasAllDescriptions &&
+        sections.map((section) => {
+          const desc = sectionDescriptions.find((d) => d.section === section.name)
+          if (!desc) return null
 
-            return (
-              <div
-                key={section.name}
-                className="section-analyzer-page section-analyzer-section-page"
-              >
-                <div className="section-analyzer-content">
-                  <SectionDescriptions
-                    sections={[section]}
-                    descriptions={[desc]}
-                  />
-                </div>
-              </div>
-            )
-          })}
-      </div>
+          return (
+            <div key={section.name}>
+              <SectionDescriptions
+                sections={[section]}
+                descriptions={[desc]}
+              />
+            </div>
+          )
+        })}
     </div>
   )
 }
