@@ -248,6 +248,7 @@ export function VideoAnalyzer() {
             sections={sections}
             videoDuration={videoDuration}
             isLoading={isLoading}
+            isDescribing={isDescribing}
             onAnalyze={handleAnalyze}
           />
         </div>

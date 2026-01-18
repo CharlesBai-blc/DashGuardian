@@ -22,9 +22,9 @@ export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResul
       style={{
         display: 'inline-flex',
         padding: '12px 20px',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'transparent',
         borderRadius: '12px',
-        borderLeft: '4px solid #fff',
+        borderLeft: '4px solid rgba(255, 255, 255, 0.3)',
         marginBottom: '8px',
         gap: '20px',
         flexWrap: 'wrap',
