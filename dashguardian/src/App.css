@@ -452,13 +452,13 @@ html.home-page-active {
   position: fixed;
 }
 
-video, a, .title, .text {
+/* video, a, .title, .text {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   pointer-events: none;
-}
+} */
 
 a {
   pointer-events: auto;
