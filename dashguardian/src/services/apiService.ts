@@ -58,9 +58,9 @@ Examine the actions of ALL vehicles involved in the moments leading up to the co
 **Step 3: Determine the POV vehicle's role**
 Based on your objective analysis, classify the POV vehicle's role:
 
-**"victim"** - The POV vehicle was struck by another vehicle whose actions caused the collision OR the POV vehicle was unable to avoid the collision due to the other vehicle's actions. The other party's behavior (failure to yield, running signals, unsafe maneuvers, etc.) directly led to the impact.
+**"victim"** - The POV vehicle was struck by another vehicle whose actions caused the collision OR the POV vehicle was clearly unable to avoid the collision due to the other vehicle's actions. The other party's behavior (failure to yield, running signals, unsafe maneuvers, etc.) directly led to the impact.
 
-**"offender"** - The POV vehicle's actions (aggressive driving, speed, following distance, failure to yield, rule violations, etc.) directly caused or contributed to the collision. The POV vehicle initiated contact or failed to avoid a preventable collision.
+**"offender"** - The POV vehicle's actions (inattention, aggressive driving, speed, following distance, failure to yield, rule violations, etc.) directly caused or contributed to the collision. The POV vehicle initiated contact or failed to avoid a preventable collision.
 
 **"witness"** - The POV vehicle was not involved in the collision. It observed an incident between other vehicles without making contact.
 
