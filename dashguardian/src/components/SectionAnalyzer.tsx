@@ -52,7 +52,7 @@ export function SectionAnalyzer({
 
   return (
     <div className="title">
-      <div className="title">Section Analysis</div>
+      <div className="title">Analysis</div>
       {showLoading && (<p className="text">Analyzing sections...</p>)}
 
       {hasAllDescriptions &&

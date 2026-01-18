@@ -173,6 +173,7 @@
   font-size: 24px;
   font-family: "Google Sans", sans-serif;
   margin:30px;
+  margin-top:15px;
   margin-bottom:0;
 }
 
@@ -206,12 +207,14 @@
 }
 
 .progressBar {
+  position: absolute;
   width: calc(100% - 60px);
   height: 4px;
   background-color: rgba(255, 255, 255, 0.2);
   overflow: hidden;
   margin:30px;
-  margin-top: 120px;
+  /* margin-top: 120px; */
+  bottom:10px;
 }
 
 .progressBarFill {
@@ -324,8 +327,8 @@
   position: relative;
   width: 30%;
   max-height: 100vh;
-  /* overflow: hidden; */
-  overflow-y: auto;
+  overflow: hidden;
+  /* overflow-y: auto; */
 }
 
 /* Custom scrollbar for AnalysisPanel scrollable content */

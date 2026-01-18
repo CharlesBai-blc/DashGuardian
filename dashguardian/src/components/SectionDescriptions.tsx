@@ -13,8 +13,8 @@ export function SectionDescriptions({ sections, descriptions }: SectionDescripti
         const desc = descriptions.find((d) => d.section === section.name)
         return (
           <div key={section.name}>
-            <div className="text">
-              {section.name === 'event' ? '⚡ ' : ''}
+            <div className="title">
+              {section.name === 'event' ? ' ' : ''}
               {section.label}
               <span className="component-section-timestamp">
                 ({section.start.toFixed(1)}s - {section.end.toFixed(1)}s)
@@ -33,7 +33,7 @@ export function SectionDescriptions({ sections, descriptions }: SectionDescripti
                   {Object.entries(desc.description as StructuredSectionDescription).map(([header, body]) => (
                     <div key={header}>
                       <div className="header">{header}</div>
-                      <div className="text">{body}</div>
+                      <div className="text"><li className="text">{body}</li></div>
                     </div>
                   ))}
                 </div>
