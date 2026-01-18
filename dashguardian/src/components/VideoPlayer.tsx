@@ -69,9 +69,6 @@ export function VideoPlayer({ file }: VideoPlayerProps) {
       >
         Your browser does not support the video tag.
       </video>
-      <div id="controls">
-        
-      </div>
     </div>
     
   )
