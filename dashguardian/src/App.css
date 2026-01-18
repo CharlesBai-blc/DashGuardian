@@ -258,24 +258,55 @@
 }
 
 #video {
-  position: relative;
+  position: absolute;
   top: 0;
-  bottom:60px;
+  bottom:120px;
   left:0;
   width: 100%;
-  max-height: calc(100% - 60px);
+  height: calc(100% - 120px);
+
+  
   /* border-radius: 20px; */
   /* border: 2px solid rgba(25,25,25,.8); */
 
   /* box-shadow: 0 0 10px black;   */
   z-index: 0;
+
+}
+
+.upload {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  background-color: rgba(150,150,150,.1);
+  transition:.3s;
+}
+.upload:hover {
+  background-color: rgba(150,150,150,.05);
+  opacity: .7;
+}
+
+#uploadIcon {
+  width: 100px;
+  opacity: .5;
+}
+.paragraph {
+  margin-top: '20px';
+  color: rgba(255, 255, 255, 0.5);
+  font-size: '14px';
+  font-family: "Google Sans", sans-serif;
 }
 
 #controls {
-  position: relative;
+  position: absolute;
   width: 100%;
-  height: fit-content;
-  
+  height: 120px;
+  bottom: 0;  
 }
 
 body {

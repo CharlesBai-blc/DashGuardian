@@ -26,21 +26,27 @@ export function VideoPlayer({ file }: VideoPlayerProps) {
   }
 
   return (
-    <video
-      id="video"
-      src={videoUrl}
-      playsInline
-      controls
-      style={{
-        position: 'relative',
-        top: 0,
-        left: 0,
-        width: '100%',
-        maxHeight: 'calc(100% - 60px)',
-        zIndex: 0
-      }}
-    >
-      Your browser does not support the video tag.
-    </video>
+    <div>
+      <video
+        id="video"
+        src={videoUrl}
+        playsInline
+        controls
+        style={{
+          position: 'relative',
+          top: 0,
+          left: 0,
+          width: '100%',
+          maxHeight: 'calc(100% - 60px)',
+          zIndex: 0
+        }}
+      >
+        Your browser does not support the video tag.
+      </video>
+      <div id="controls">
+        
+      </div>
+    </div>
+    
   )
 }

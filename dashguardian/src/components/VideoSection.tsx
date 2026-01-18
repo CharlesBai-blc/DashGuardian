@@ -7,7 +7,7 @@ interface VideoSectionProps {
   disabled: boolean
 }
 
-export function VideoSection({ selectedFile, onFileChange, disabled }: VideoSectionProps) {
+export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleButtonClick = () => {
@@ -22,6 +22,7 @@ export function VideoSection({ selectedFile, onFileChange, disabled }: VideoSect
   // Before upload: show upload button
   if (!selectedFile) {
     return (
+<<<<<<< Updated upstream
       <div
         style={{
           display: 'flex',
@@ -81,6 +82,20 @@ export function VideoSection({ selectedFile, onFileChange, disabled }: VideoSect
         >
           Select a dashcam video to analyze
         </p>
+=======
+      <div id="video">
+        <input ref={fileInputRef} type="file" accept="video/*" 
+          onChange={handleFileSelect} style={{ display: 'none' }}/>
+
+        <a onClick={handleButtonClick} className="upload">
+          <img id="uploadIcon" src="upload.png" alt="Upload File"/>
+          <div className="paragraph">
+            Upload a Video File<br/> (limit 5MB)
+          </div>
+        </a>
+
+        
+>>>>>>> Stashed changes
       </div>
     )
   }
