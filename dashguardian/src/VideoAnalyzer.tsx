@@ -3,7 +3,7 @@ import type { AggregatedResults, SectionDescription } from './types'
 import { convertFileToBase64, calculateMedian } from './utils'
 import { makeAnalysisCall, describeSectionCall, generateVideoSummary } from './services/apiService'
 import { useVideoDuration, useVideoSections } from './hooks'
-import { VideoSection, AnalysisPanel, SectionAnalyzer } from './components'
+import { VideoSection, AnalysisPanel, SectionAnalyzer, CollisionTimeline } from './components'
 
 export function VideoAnalyzer() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -236,7 +236,12 @@ export function VideoAnalyzer() {
             disabled={isLoading}
           />
           <div id="controls">
-            <div id="scroll"></div>
+            {results && videoDuration > 0 && (
+              <CollisionTimeline
+                collisionTime={results.medianTime}
+                videoDuration={videoDuration}
+              />
+            )}
           </div>
         </div>
 
