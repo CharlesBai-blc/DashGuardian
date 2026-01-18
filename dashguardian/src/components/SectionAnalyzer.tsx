@@ -1,31 +1,15 @@
-import type { VideoSection, SectionDescription } from '../types'
-import { SectionDescriptions } from './SectionDescriptions'
+import type { VideoSection, SectionDescription, StructuredSectionDescription } from '../types'
 import '../App.css'
 
 interface SectionAnalyzerProps {
   sections: VideoSection[] | null
   sectionDescriptions: SectionDescription[]
-  isDescribing: boolean
-  detectedFault?: 'victim' | 'offender' | 'witness'
 }
 
 export function SectionAnalyzer({
   sections,
   sectionDescriptions,
-  isDescribing,
-  detectedFault
 }: SectionAnalyzerProps) {
-  const getPerspectiveColor = (fault?: string) => {
-    switch (fault) {
-      case 'offender':
-        return '#ed7674'
-      case 'witness':
-        return '#9f92c3'
-      default:
-        return '#90b9db'
-    }
-  }
-
   // Check if all descriptions are complete
   const hasAllDescriptions = 
     sectionDescriptions.length === 3 && 
@@ -39,36 +23,43 @@ export function SectionAnalyzer({
       }
       return false
     })
-  
-  // Show loading state if analysis is in progress
-  const showLoading = isDescribing || (sectionDescriptions.length > 0 && !hasAllDescriptions)
 
-  // Don't render if no sections or if we haven't started describing yet
-  if (!sections || (sectionDescriptions.length === 0 && !isDescribing)) {
+  // Don't render if no sections or descriptions not ready
+  if (!sections || !hasAllDescriptions) {
     return null
   }
 
-  const perspectiveColor = getPerspectiveColor(detectedFault)
+  const sectionOrder: Array<'ante' | 'event' | 'post'> = ['ante', 'event', 'post']
 
   return (
-    <div className="title">
-      <div className="title">Analysis</div>
-      {showLoading && (<p className="text">Analyzing sections...</p>)}
+    <>
+      {sectionOrder.map((sectionName) => {
+        const section = sections.find((s) => s.name === sectionName)
+        const desc = sectionDescriptions.find((d) => d.section === sectionName)
+        if (!section || !desc) return null
 
-      {hasAllDescriptions &&
-        sections.map((section) => {
-          const desc = sectionDescriptions.find((d) => d.section === section.name)
-          if (!desc) return null
-
-          return (
-            <div key={section.name}>
-              <SectionDescriptions
-                sections={[section]}
-                descriptions={[desc]}
-              />
+        return (
+          <div key={sectionName} className="section-analysis-page">
+            <div className="section-analysis-content">
+              <div className="title" style={{ margin: 0, marginBottom: '8px' }}>{section.label}</div>
+              <div className="text" style={{ margin: 0, marginBottom: '40px', opacity: 0.5 }}>
+                {section.start.toFixed(1)}s - {section.end.toFixed(1)}s
+              </div>
+              
+              {typeof desc.description === 'string' ? (
+                <div className="text" style={{ margin: 0 }}>{desc.description}</div>
+              ) : (
+                Object.entries(desc.description as StructuredSectionDescription).map(([header, body]) => (
+                  <div key={header} style={{ marginBottom: '24px' }}>
+                    <div className="header" style={{ margin: 0, marginBottom: '8px', color: '#90cdf4' }}>{header}</div>
+                    <div className="text" style={{ margin: 0 }}>{body}</div>
+                  </div>
+                ))
+              )}
             </div>
-          )
-        })}
-    </div>
+          </div>
+        )
+      })}
+    </>
   )
 }

@@ -98,6 +98,9 @@ function App() {
             <HelpPage1 />
             <HelpPage2 />
             <HelpPage3 />
+            <footer className="page-footer">
+              &copy; 2026 DashGuardian, All Rights Reserved
+            </footer>
           </div>
         </div>
       </div>

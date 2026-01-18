@@ -226,46 +226,55 @@ export function VideoAnalyzer() {
 
   return (
     <>
-      {/* Top Section: Left + Right Panels */}
-      <div className="analyzer-top-section">
-        {/* Left Panel - Video Section */}
-        <div id="left">
-          <VideoSection
-            selectedFile={selectedFile}
-            onFileChange={handleFileChange}
-            disabled={isLoading}
-          />
-          {results && videoDuration != null && videoDuration > 0 && typeof results.medianTime === 'number' && (
-            <div className="timeline-container">
-              <CollisionTimeline
-                collisionTime={results.medianTime}
-                videoDuration={videoDuration}
-              />
-            </div>
-          )}
-        </div>
+      {/* Page 1: Top Section - Video + Analysis Panel */}
+      <div className="snap-page">
+        <div className="analyzer-top-section">
+          {/* Left Panel - Video Section */}
+          <div id="left">
+            <VideoSection
+              selectedFile={selectedFile}
+              onFileChange={handleFileChange}
+              disabled={isLoading}
+            />
+            {results && videoDuration != null && videoDuration > 0 && typeof results.medianTime === 'number' && (
+              <div className="timeline-container">
+                <CollisionTimeline
+                  collisionTime={results.medianTime}
+                  videoDuration={videoDuration}
+                />
+              </div>
+            )}
+          </div>
 
-        {/* Right Panel - Analysis Panel */}
-        <div id="right">
-          <AnalysisPanel
-            selectedFile={selectedFile}
-            results={results}
-            sections={sections}
-            videoDuration={videoDuration}
-            isLoading={isLoading}
-            isDescribing={isDescribing}
-            onAnalyze={handleAnalyze}
-          />
+          {/* Right Panel - Analysis Panel */}
+          <div id="right">
+            <AnalysisPanel
+              selectedFile={selectedFile}
+              results={results}
+              sections={sections}
+              videoDuration={videoDuration}
+              isLoading={isLoading}
+              isDescribing={isDescribing}
+              onAnalyze={handleAnalyze}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Bottom Section: Full-width Section Analyzer */}
+      {/* Pages 2-4: Section Analysis (Ante, Event, Post) */}
       <SectionAnalyzer
         sections={sections}
         sectionDescriptions={sectionDescriptions}
-        isDescribing={isDescribing}
-        detectedFault={results?.detectedFault}
       />
+
+      {/* Footer Page */}
+      {sectionDescriptions.length === 3 && (
+        <div className="snap-page snap-page-footer">
+          <footer className="page-footer">
+            &copy; 2026 DashGuardian, All Rights Reserved
+          </footer>
+        </div>
+      )}
 
       {/* Hidden video element to get duration */}
       <video ref={hiddenVideoRef} style={{ display: 'none' }} />

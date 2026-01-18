@@ -350,7 +350,7 @@
   height: 100%;
   top: 0;
   overflow-y: auto;
-  /* scroll-snap-type: y mandatory; */
+  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   /* Custom scrollbar styling */
   scrollbar-width: thin;
@@ -379,10 +379,8 @@
 .analyzer-top-section {
   position: relative;
   width: 100%;
-  min-height: calc(100vh);
+  height: 100%;
   display: flex;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 #left {
@@ -605,4 +603,51 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Footer */
+.page-footer {
+  width: 100%;
+  padding: 24px 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 40px;
+}
+
+/* Snap Page - Full viewport height pages */
+.snap-page {
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.snap-page-footer {
+  min-height: auto;
+  padding: 40px 0;
+}
+
+/* Section Analysis Pages */
+.section-analysis-page {
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+.section-analysis-content {
+  max-width: 900px;
+  width: 100%;
 }

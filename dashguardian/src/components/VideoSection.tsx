@@ -29,7 +29,7 @@ export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) 
         <a onClick={handleButtonClick} className="upload">
           <img id="uploadIcon" src="upload.png" alt="Upload File"/>
           <div className="paragraph">
-            Upload a Video File<br/> (limit 5MB)
+            Upload a Video File<br/> (formats: .mp4, .mov, limit 5MB)<br/> 
           </div>
         </a>
       </div>

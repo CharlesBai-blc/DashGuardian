@@ -3,10 +3,9 @@ import '../App.css'
 
 interface AnalysisResultsSummaryProps {
   results: AggregatedResults
-  videoDuration: number | null
 }
 
-export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResultsSummaryProps) {
+export function AnalysisResultsSummary({ results }: AnalysisResultsSummaryProps) {
   const getPerspectiveColor = (fault: string) => {
     switch (fault) {
       case 'offender':
@@ -19,35 +18,14 @@ export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResul
   }
 
   return (
-    <div className="text">
-      <li className="text">
-        <span className="stat-item-label">Collision:  </span>
-        <span className="stat-item-value">{results.medianTime.toFixed(1)}s</span>
-      </li>
-
-      <li className="text">
-        <span className="stat-item-label">Window:  </span>
-        <span className="stat-item-value">
-          {results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s
-        </span>
-      </li>
-
-      <li className="text">
-        <span className="stat-item-label">Perspective:  </span>
-        <span
-          className="stat-item-value-colored"
-          style={{ color: getPerspectiveColor(results.detectedFault) }}
-        >
-          {results.detectedFault}
-        </span>
-      </li>
-
-      {videoDuration && (
-        <li className="text">
-          <span className="stat-item-label">Duration:  </span>
-          <span className="stat-item-value">{videoDuration.toFixed(1)}s</span>
-        </li>
-      )}
+    <div className="text" style={{ marginBottom: '90px', fontSize: '20px', textAlign: 'center', marginTop: '70px'}}>
+      <span className="stat-item-label">Perspective: </span>
+      <span
+        className="stat-item-value-colored"
+        style={{ color: getPerspectiveColor(results.detectedFault), fontWeight: 600 }}
+      >
+        {results.detectedFault.toUpperCase()}
+      </span>
     </div>
   )
 }

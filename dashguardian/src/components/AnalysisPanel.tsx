@@ -16,7 +16,6 @@ interface AnalysisPanelProps {
 export function AnalysisPanel({
   selectedFile,
   results,
-  videoDuration,
   isLoading,
   isDescribing = false,
   onAnalyze
@@ -132,9 +131,18 @@ export function AnalysisPanel({
   if (!selectedFile) {
     return (
       <div className="component-padding">
-        <div className="title">Dashcam Analyzer</div>
-        <div className="text">
-          Upload a Dashcam Video!
+        <div className="title" style ={{marginTop: '60px'}}>Dashcam Analyzer</div>
+        <div style={{ marginTop: '36px' }}>
+          <div className="header" style={{ marginBottom: '32px' }}>Uncertainty into <span style={{ color: '#90cdf4' }}>Clarity</span><br></br>at the touch of a button.</div>
+          <div className="text">
+            <ul>
+              <li style ={{marginBottom: '18px', fontSize: '18px'}}>Automatically detect <span style={{ color: '#ef5350' }}>collision events</span> in your dashcam footage</li>
+              <li style ={{marginBottom: '18px', fontSize: '18px'}}>Get <span style={{ color: '#64b5f6' }}>precise</span> timing information showing exactly when incidents occurred</li>
+              <li style ={{marginBottom: '18px', fontSize: '18px'}}>Identify your perspective as <span style={{ color: '#64b5f6' }}>victim</span>, <span style={{ color: '#ef5350' }}>offender</span>, or <span style={{ color: '#7c4dff' }}>witness</span></li>
+              <li style ={{marginBottom: '18px', fontSize: '18px'}}>Receive detailed incident summaries and section-by-section <span style={{ color: '#7c4dff' }}>analysis</span></li>
+              <li style ={{marginBottom: '18px', fontSize: '18px'}}><span style={{ color: '#64b5f6' }}>Review</span> before, during, and after segments of each collision event</li>
+            </ul>
+          </div>
         </div>
       </div>
     )
@@ -144,9 +152,9 @@ export function AnalysisPanel({
   if (!results) {
     return (
       <div className="">
-        <div className="title">Dashcam Analyzer</div>
-        <div className="text">
-          Video loaded and ready for analysis.<br/> Click  the button below to detect collision events.
+        <div className="title" style ={{marginTop: '60px'}}>Dashcam Analyzer</div>
+        <div className="text" style ={{marginTop: '36px', fontSize: '18px'}}>
+          Video loaded successfully and ready for analysis.<br/> Click the <span style={{ color: '#90cdf4' }}>button</span> below to get started.
         </div>
 
         
@@ -179,28 +187,29 @@ export function AnalysisPanel({
     <div style={{ width: '100%', height:'100vh' }}>
       <div className="title">Analysis Results</div>
 
-      <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
-
       {/* Summary Text - Only show when both timing info and summary are ready */}
       {results.summary && (
-        <div className="header" style={{ marginBottom: '30px' }}>
-          <div className="">Incident Summary</div>
+        <div className="header" style={{ marginBottom: '30px', marginTop: '30px' }}>
+          <div className="" style={{ marginBottom: '30px' }}>Incident Summary:</div>
+          
             {results.summary
               .split(/[.!?]+/)
               .map((sentence) => sentence.trim())
               .filter((sentence) => sentence.length > 0)
+              .filter((sentence) => !/^(thought|thinking|analysis|summary|here is|here's)/i.test(sentence))
               .map((sentence, index) => (
-                <li key={index} className="text">
+                <li key={index} className="text" style={{ marginBottom: '36px' }}>
                   {sentence}
                 </li>
               ))} 
+              <AnalysisResultsSummary results={results} />
         </div>
       )}
 
       {/* Section Analysis Progress Bar */}
       {showSectionProgress && (
         <div className="" style={{ marginBottom: '30px' }}>
-          <p className="text">Analyzing Section...</p>
+          <p className="text">Performing in-depth analysis...</p>
           <div
             className="progressBar"
             style={{
@@ -213,6 +222,18 @@ export function AnalysisPanel({
               style={{ width: `${sectionProgress}%` }}
             />
           </div>
+        </div>
+      )}
+
+      {/* Scroll hint - shows after section analysis completes */}
+      {results.summary && !showSectionProgress && !isDescribing && (
+        <div className="text" style={{ 
+          marginTop: '20px', 
+          color: 'rgba(255, 255, 255, 0.6)',
+          fontStyle: 'italic',
+          textAlign: 'center'
+        }}>
+          ↓ Scroll down for in-depth analysis ↓
         </div>
       )}
     </div>
