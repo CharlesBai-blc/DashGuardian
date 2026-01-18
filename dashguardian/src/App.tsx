@@ -3,10 +3,14 @@ import './App.css'
 import { AnalyzePage } from './AnalyzePage'
 import { InfoPage } from './InfoPage'
 
+const brollVideos = ['/broll1.mp4', '/broll2.mp4', '/broll3.mp4', '/broll4.mp4', '/broll5.mp4']
+
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
   const [canScroll, setCanScroll] = useState(false)
   const timerRef = useRef<number | null>(null)
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Enable scrolling after button animation (1.8s delay + 0.8s duration = 2.6s)
   useEffect(() => {
@@ -53,6 +57,25 @@ function App() {
     }
   }, [currentPage])
 
+  // Handle video looping
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || currentPage !== 'home') return
+
+    const handleVideoEnd = () => {
+      setCurrentVideoIndex((prev) => (prev) % brollVideos.length)
+    }
+
+    video.addEventListener('ended', handleVideoEnd)
+    video.src = brollVideos[currentVideoIndex]
+    video.load()
+    video.play().catch(() => {})
+
+    return () => {
+      video.removeEventListener('ended', handleVideoEnd)
+    }
+  }, [currentVideoIndex, currentPage])
+
   if (currentPage === 'analyze') {
     return <AnalyzePage onBack={() => setCurrentPage('home')} />
   }
@@ -60,6 +83,14 @@ function App() {
   // Home Page
   return (
     <div id="page" className="primary home-page">
+      <video
+        ref={videoRef}
+        className="home-background-video"
+        autoPlay
+        muted
+        loop={false}
+        playsInline
+      />
       <div id="top">
         <a id="Home" className="active">Home</a>
         <a id="Analyze" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>Analyze</a>

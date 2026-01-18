@@ -14,6 +14,17 @@
   left: 0;
 }
 
+.home-background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.4;
+}
+
 .home-scroll-container {
   position: fixed;
   width: 100%;
@@ -26,6 +37,7 @@
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  z-index: 1;
 }
 
 .home-scroll-container::-webkit-scrollbar {
@@ -131,7 +143,7 @@
   top:0;
   display: flex;
   justify-content: center;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   overflow:hidden;
   border-bottom: 1px solid rgba(100,100,100,.5);
