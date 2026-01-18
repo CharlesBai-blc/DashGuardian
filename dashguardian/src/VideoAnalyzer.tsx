@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { VideoPlayer } from './VideoPlayer'
+import promptsData from './prompts.json'
 
 interface AnalysisResult {
   approx_t_s: number
@@ -27,6 +28,16 @@ interface AggregatedResults {
   medianWindow: [number, number]
 }
 
+interface PromptConfig {
+  ante: string;
+  event: string;
+  post: string;
+}
+
+interface PromptsData {
+  [key: string]: PromptConfig;
+}
+
 export function VideoAnalyzer() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +46,7 @@ export function VideoAnalyzer() {
   const [sections, setSections] = useState<VideoSection[] | null>(null)
   const [sectionDescriptions, setSectionDescriptions] = useState<SectionDescription[]>([])
   const [isDescribing, setIsDescribing] = useState(false)
+  const [perspective, setPerspective] = useState<string>('victim')
   const hiddenVideoRef = useRef<HTMLVideoElement>(null)
   const [base64VideoCache, setBase64VideoCache] = useState<string | null>(null)
 
@@ -199,40 +211,15 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
     apiKey: string, 
     section: VideoSection
   ): Promise<string> => {
-    const sectionPrompts = {
-      ante: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "ANTE" period - before any collision).
-
-Describe what you see in this section:
-- Road conditions and environment
-- Traffic situation
-- Driver behavior and vehicle movement
-- Any potential hazards or warning signs
-- Weather and visibility
-
-Be concise but thorough. This is the period BEFORE the main event.`,
-      
-      event: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "EVENT" period - the collision/incident).
-
-Describe what you see in this critical section:
-- What exactly happened in the collision/incident
-- Which vehicles/objects were involved
-- Point of impact and collision dynamics
-- Any evasive actions taken
-- Immediate aftermath
-
-Be detailed and precise. This is the MOST IMPORTANT section capturing the actual incident.`,
-      
-      post: `This is dashcam footage. Focus ONLY on the time range from ${section.start.toFixed(1)}s to ${section.end.toFixed(1)}s (the "POST" period - after the collision).
-
-Describe what you see in this section:
-- Aftermath of the incident
-- Vehicle positions after impact
-- Any secondary events
-- Response actions (stopping, pulling over, etc.)
-- Final state of the scene
-
-Be concise but thorough. This is the period AFTER the main event.`
-    };
+    // Get prompts for current perspective
+    const allPrompts = promptsData as PromptsData;
+    const perspectivePrompts = allPrompts[perspective] || allPrompts.victim;
+    const rawPrompt = perspectivePrompts[section.name as keyof PromptConfig];
+    
+    // Replace placeholders
+    const finalPrompt = rawPrompt
+      .replace('{{start}}', section.start.toFixed(1))
+      .replace('{{end}}', section.end.toFixed(1));
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -242,14 +229,14 @@ Be concise but thorough. This is the period AFTER the main event.`
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "allenai/molmo-2-8b:free",
+          "model": "google/gemini-3-flash-preview",
           "messages": [
             {
               "role": "user",
               "content": [
                 {
                   "type": "text",
-                  "text": sectionPrompts[section.name]
+                  "text": finalPrompt
                 },
                 {
                   "type": "video_url",
@@ -487,24 +474,46 @@ Be concise but thorough. This is the period AFTER the main event.`
                   </tbody>
                 </table>
 
-                {/* Describe Sections Button */}
-                <button
-                  onClick={handleDescribeSections}
-                  disabled={isDescribing}
-                  style={{
-                    marginTop: '15px',
-                    padding: '10px 20px',
-                    backgroundColor: '#7c4dff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: isDescribing ? 'not-allowed' : 'pointer',
-                    opacity: isDescribing ? 0.7 : 1,
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {isDescribing ? '⏳ Describing Sections...' : '🔍 Describe All Sections'}
-                </button>
+                {/* Describe Sections Button and Perspective Selector */}
+                <div style={{ marginTop: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <label style={{ fontSize: '0.8em', color: 'rgba(255,255,255,0.6)' }}>Perspective:</label>
+                    <select 
+                      value={perspective}
+                      onChange={(e) => setPerspective(e.target.value)}
+                      style={{
+                        padding: '8px',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="victim">Victim Perspective</option>
+                      <option value="offender">Offender Perspective</option>
+                      <option value="witness">Witness Perspective</option>
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={handleDescribeSections}
+                    disabled={isDescribing}
+                    style={{
+                      alignSelf: 'flex-end',
+                      padding: '10px 20px',
+                      backgroundColor: '#7c4dff',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: isDescribing ? 'not-allowed' : 'pointer',
+                      opacity: isDescribing ? 0.7 : 1,
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {isDescribing ? '⏳ Describing Sections...' : '🔍 Describe All Sections'}
+                  </button>
+                </div>
 
                 {/* Section Descriptions */}
                 {sectionDescriptions.length > 0 && (
