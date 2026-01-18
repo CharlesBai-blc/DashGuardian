@@ -141,9 +141,9 @@ export function VideoAnalyzer() {
       const base64Video = await convertFileToBase64(selectedFile)
       setBase64VideoCache(base64Video)
 
-      // Make 5 parallel API calls and summary call
-      console.log('Making 5 parallel API calls and summary call...')
-      const analysisPromises = Array.from({ length: 5 }, () => makeAnalysisCall(base64Video, apiKey))
+      // Make 8 parallel API calls and summary call
+      console.log('Making 8 parallel API calls and summary call...')
+      const analysisPromises = Array.from({ length: 8 }, () => makeAnalysisCall(base64Video, apiKey))
       const summaryPromise = generateVideoSummary(base64Video, apiKey)
       
       // Wait for all calls to complete
@@ -179,7 +179,7 @@ export function VideoAnalyzer() {
         console.log('Median window:', medianWindow)
 
         // Determine majority fault with improved accuracy
-        // Require at least 3 out of 5 votes (60% consensus) for higher confidence
+        // Require at least 5 out of 8 votes (60% consensus) for higher confidence
         const faultCounts = validResults.reduce(
           (acc, curr) => {
             acc[curr.fault] = (acc[curr.fault] || 0) + 1
@@ -190,7 +190,7 @@ export function VideoAnalyzer() {
 
         const faultEntries = Object.entries(faultCounts)
         const maxFault = faultEntries.reduce((a, b) => a[1] > b[1] ? a : b)
-        const minConsensus = Math.ceil(validResults.length * 0.6) // At least 60% consensus (3 out of 5)
+        const minConsensus = Math.ceil(validResults.length * 0.6) // At least 60% consensus (5 out of 8)
         
         // If we have strong consensus (at least 60%), use it
         // Otherwise, use simple majority
@@ -235,14 +235,14 @@ export function VideoAnalyzer() {
             onFileChange={handleFileChange}
             disabled={isLoading}
           />
-          <div id="controls">
-            {results && videoDuration > 0 && (
+          {results && videoDuration != null && videoDuration > 0 && typeof results.medianTime === 'number' && (
+            <div className="timeline-container">
               <CollisionTimeline
                 collisionTime={results.medianTime}
                 videoDuration={videoDuration}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Right Panel - Analysis Panel */}

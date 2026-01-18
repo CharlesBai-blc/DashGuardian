@@ -38,7 +38,7 @@ export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) 
 
   // After upload: show VideoPlayer
   return (
-    <div className="">
+    <div id="video-container">
       <VideoPlayer file={selectedFile} />
     </div>
   )
