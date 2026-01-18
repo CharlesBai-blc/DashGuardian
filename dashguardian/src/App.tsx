@@ -98,6 +98,11 @@ function App() {
         <a id="Home" className="active">Home</a>
         <a id="Analyze" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>Analyze</a>
       </div> */}
+      <div id="top">
+        <a id="Home" className="active" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>
+          <img id="logo" src="LogoWhite.png" alt="DashGuardian Logo"/>
+        </a>
+      </div>
       
       <div className="home-scroll-container">
         <div className="home-content">

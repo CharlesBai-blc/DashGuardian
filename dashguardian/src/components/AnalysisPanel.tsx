@@ -146,7 +146,7 @@ export function AnalysisPanel({
       <div className="">
         <div className="title">Dashcam Analyzer</div>
         <div className="text">
-          Video loaded and ready for analysis. Click the button below to detect collision events.
+          Video loaded and ready for analysis.<br/> Click  the button below to detect collision events.
         </div>
 
         
