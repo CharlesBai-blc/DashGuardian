@@ -4,11 +4,9 @@ interface CollisionTimelineProps {
 }
 
 export function CollisionTimeline({ collisionTime, videoDuration }: CollisionTimelineProps) {
-  // Calculate start and end times (5 seconds before/after collision)
   const startTime = Math.max(0, collisionTime - 5)
   const endTime = Math.min(videoDuration, collisionTime + 5)
 
-  // Calculate positions as percentages
   const startPos = (startTime / videoDuration) * 100
   const collisionPos = (collisionTime / videoDuration) * 100
   const endPos = (endTime / videoDuration) * 100
@@ -25,13 +23,11 @@ export function CollisionTimeline({ collisionTime, videoDuration }: CollisionTim
       padding: '10px 0',
       boxSizing: 'border-box'
     }}>
-      {/* Timeline container */}
       <div style={{
         position: 'relative',
         width: '100%',
         height: '40px'
       }}>
-        {/* Main line */}
         <div style={{
           position: 'absolute',
           top: '5px',
@@ -41,7 +37,6 @@ export function CollisionTimeline({ collisionTime, videoDuration }: CollisionTim
           backgroundColor: 'rgba(255,255,255,0.3)'
         }} />
 
-        {/* Start marker */}
         <div style={{
           position: 'absolute',
           left: `${startPos}%`,
@@ -73,7 +68,6 @@ export function CollisionTimeline({ collisionTime, videoDuration }: CollisionTim
           </div>
         </div>
 
-        {/* Collision marker */}
         <div style={{
           position: 'absolute',
           left: `${collisionPos}%`,
@@ -107,7 +101,6 @@ export function CollisionTimeline({ collisionTime, videoDuration }: CollisionTim
           </div>
         </div>
 
-        {/* End marker */}
         <div style={{
           position: 'absolute',
           left: `${endPos}%`,

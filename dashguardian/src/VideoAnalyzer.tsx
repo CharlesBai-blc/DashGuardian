@@ -14,11 +14,9 @@ export function VideoAnalyzer() {
   const [base64VideoCache, setBase64VideoCache] = useState<string | null>(null)
   const hasAutoTriggered = useRef(false)
 
-  // Custom hooks
   const { videoDuration, hiddenVideoRef } = useVideoDuration(selectedFile)
   const sections = useVideoSections(results, videoDuration)
 
-  // Check if all analysis is complete
   const isAnalysisComplete =
     results !== null &&
     results.summary &&
@@ -37,7 +35,6 @@ export function VideoAnalyzer() {
       return false
     })
 
-  // Control scrolling based on analysis completion
   useEffect(() => {
     const mainElement = document.getElementById('main')
     if (mainElement) {
@@ -68,7 +65,6 @@ export function VideoAnalyzer() {
 
     setIsDescribing(true)
 
-    // Initialize descriptions with loading state
     setSectionDescriptions(
       sections.map((s) => ({
         section: s.name,
@@ -78,14 +74,12 @@ export function VideoAnalyzer() {
     )
 
     try {
-      // Use cached base64 or convert
       let base64Video = base64VideoCache
       if (!base64Video) {
         base64Video = await convertFileToBase64(selectedFile)
         setBase64VideoCache(base64Video)
       }
 
-      // Make parallel calls for all sections
       console.log('Describing all 3 sections in parallel...')
       const promises = sections.map((section) =>
         describeSectionCall(base64Video!, apiKey, section, results.detectedFault)
@@ -111,7 +105,6 @@ export function VideoAnalyzer() {
     }
   }, [sections, selectedFile, results, base64VideoCache])
 
-  // Automatically trigger section descriptions when results and sections are available
   useEffect(() => {
     if (results && sections && selectedFile && !isDescribing && sectionDescriptions.length === 0 && !hasAutoTriggered.current) {
       hasAutoTriggered.current = true
@@ -137,16 +130,13 @@ export function VideoAnalyzer() {
         )
       }
 
-      // Convert file to base64 and cache it
       const base64Video = await convertFileToBase64(selectedFile)
       setBase64VideoCache(base64Video)
 
-      // Make 8 parallel API calls and summary call
       console.log('Making 8 parallel API calls and summary call...')
       const analysisPromises = Array.from({ length: 8 }, () => makeAnalysisCall(base64Video, apiKey))
       const summaryPromise = generateVideoSummary(base64Video, apiKey)
       
-      // Wait for all calls to complete
       const [apiResults, videoSummary] = await Promise.all([
         Promise.all(analysisPromises),
         summaryPromise.catch((error) => {
@@ -155,7 +145,6 @@ export function VideoAnalyzer() {
         })
       ])
 
-      // Filter out null values with type guard
       const validResults = apiResults.filter(
         (r): r is NonNullable<typeof r> => r !== null
       )
@@ -163,11 +152,9 @@ export function VideoAnalyzer() {
       console.log('Individual results:', validResults)
 
       if (validResults.length > 0) {
-        // Calculate median of approx_t_s
         const times = validResults.map((r) => r.approx_t_s)
         const medianTime = calculateMedian(times)
 
-        // Calculate median window (median of starts and ends)
         const windowStarts = validResults.map((r) => r.window_s[0])
         const windowEnds = validResults.map((r) => r.window_s[1])
         const medianWindow: [number, number] = [
@@ -178,8 +165,6 @@ export function VideoAnalyzer() {
         console.log('Median collision time:', medianTime, 'seconds')
         console.log('Median window:', medianWindow)
 
-        // Determine majority fault with improved accuracy
-        // Require at least 5 out of 8 votes (60% consensus) for higher confidence
         const faultCounts = validResults.reduce(
           (acc, curr) => {
             acc[curr.fault] = (acc[curr.fault] || 0) + 1
@@ -190,23 +175,19 @@ export function VideoAnalyzer() {
 
         const faultEntries = Object.entries(faultCounts)
         const maxFault = faultEntries.reduce((a, b) => a[1] > b[1] ? a : b)
-        const minConsensus = Math.ceil(validResults.length * 0.6) // At least 60% consensus (5 out of 8)
+        const minConsensus = Math.ceil(validResults.length * 0.6)
         
-        // If we have strong consensus (at least 60%), use it
-        // Otherwise, use simple majority
         let detectedFault: 'victim' | 'offender' | 'witness'
         if (maxFault[1] >= minConsensus) {
           detectedFault = maxFault[0] as 'victim' | 'offender' | 'witness'
           console.log(`Strong consensus (${maxFault[1]}/${validResults.length}) for:`, detectedFault)
         } else {
-          // Fallback to simple majority
           detectedFault = maxFault[0] as 'victim' | 'offender' | 'witness'
           console.log(`Majority vote (${maxFault[1]}/${validResults.length}) for:`, detectedFault)
         }
         
         console.log('Fault distribution:', faultCounts)
 
-        // Set results with summary (both ready at the same time)
         setResults({
           individualResults: validResults,
           medianTime,
@@ -226,10 +207,8 @@ export function VideoAnalyzer() {
 
   return (
     <>
-      {/* Page 1: Top Section - Video + Analysis Panel */}
       <div className="snap-page">
         <div className="analyzer-top-section">
-          {/* Left Panel - Video Section */}
           <div id="left">
             <VideoSection
               selectedFile={selectedFile}
@@ -246,7 +225,6 @@ export function VideoAnalyzer() {
             )}
           </div>
 
-          {/* Right Panel - Analysis Panel */}
           <div id="right">
             <AnalysisPanel
               selectedFile={selectedFile}
@@ -261,13 +239,11 @@ export function VideoAnalyzer() {
         </div>
       </div>
 
-      {/* Pages 2-4: Section Analysis (Ante, Event, Post) */}
       <SectionAnalyzer
         sections={sections}
         sectionDescriptions={sectionDescriptions}
       />
 
-      {/* Footer Page */}
       {sectionDescriptions.length === 3 && (
         <div className="snap-page snap-page-footer">
           <footer className="page-footer">
@@ -276,7 +252,6 @@ export function VideoAnalyzer() {
         </div>
       )}
 
-      {/* Hidden video element to get duration */}
       <video ref={hiddenVideoRef} style={{ display: 'none' }} />
     </>
   )

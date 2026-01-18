@@ -12,7 +12,6 @@ export function VideoPlayer({ file }: VideoPlayerProps) {
       const url = URL.createObjectURL(file)
       setVideoUrl(url)
 
-      // Cleanup: revoke the object URL when component unmounts or file changes
       return () => {
         URL.revokeObjectURL(url)
       }

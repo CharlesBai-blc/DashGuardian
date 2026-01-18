@@ -24,18 +24,15 @@ export function AnalysisPanel({
   const [isCompleting, setIsCompleting] = useState(false)
   const prevLoadingRef = useRef(isLoading)
 
-  // Section analysis progress bar state
   const [sectionProgress, setSectionProgress] = useState(0)
   const [isSectionCompleting, setIsSectionCompleting] = useState(false)
   const prevDescribingRef = useRef(isDescribing)
 
-  // Animate progress bar when loading
   useEffect(() => {
     const wasLoading = prevLoadingRef.current
     prevLoadingRef.current = isLoading
 
     if (isLoading && !wasLoading) {
-      // Just started loading - reset in next tick
       setTimeout(() => {
         setProgress(0)
         setIsCompleting(false)
@@ -43,13 +40,11 @@ export function AnalysisPanel({
     }
 
     if (isLoading) {
-      // Animate progress (doesn't need to be accurate, just visual feedback)
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 95) {
-            return 95 // Stop at 95% until actually complete
+            return 95
           }
-          // Accelerate progress (starts fast, slows down)
           const increment = prev < 50 ? 5 : prev < 80 ? 2 : 1
           return prev + increment
         })
@@ -57,7 +52,6 @@ export function AnalysisPanel({
 
       return () => clearInterval(interval)
     } else if (wasLoading && !isLoading) {
-      // Just finished loading - complete the progress bar in next tick
       setTimeout(() => {
         setIsCompleting(true)
         setProgress(100)
@@ -65,7 +59,6 @@ export function AnalysisPanel({
     }
   }, [isLoading])
 
-  // Fade out after completion
   useEffect(() => {
     if (isCompleting && progress === 100) {
       const fadeTimeout = setTimeout(() => {
@@ -78,13 +71,11 @@ export function AnalysisPanel({
 
   const showProgress = isLoading || isCompleting
 
-  // Animate section analysis progress bar
   useEffect(() => {
     const wasDescribing = prevDescribingRef.current
     prevDescribingRef.current = isDescribing
 
     if (isDescribing && !wasDescribing) {
-      // Just started describing - reset in next tick
       setTimeout(() => {
         setSectionProgress(0)
         setIsSectionCompleting(false)
@@ -92,13 +83,11 @@ export function AnalysisPanel({
     }
 
     if (isDescribing) {
-      // Animate progress (doesn't need to be accurate, just visual feedback)
       const interval = setInterval(() => {
         setSectionProgress((prev) => {
           if (prev >= 95) {
-            return 95 // Stop at 95% until actually complete
+            return 95
           }
-          // Accelerate progress (starts fast, slows down)
           const increment = prev < 50 ? 5 : prev < 80 ? 2 : 1
           return prev + increment
         })
@@ -106,7 +95,6 @@ export function AnalysisPanel({
 
       return () => clearInterval(interval)
     } else if (wasDescribing && !isDescribing) {
-      // Just finished describing - complete the progress bar in next tick
       setTimeout(() => {
         setIsSectionCompleting(true)
         setSectionProgress(100)
@@ -114,7 +102,6 @@ export function AnalysisPanel({
     }
   }, [isDescribing])
 
-  // Fade out section progress bar after completion
   useEffect(() => {
     if (isSectionCompleting && sectionProgress === 100) {
       const fadeTimeout = setTimeout(() => {
@@ -127,7 +114,6 @@ export function AnalysisPanel({
 
   const showSectionProgress = isDescribing || isSectionCompleting
 
-  // Empty state: no file selected
   if (!selectedFile) {
     return (
       <div className="component-padding">
@@ -148,7 +134,6 @@ export function AnalysisPanel({
     )
   }
 
-  // File selected but no results yet
   if (!results) {
     return (
       <div className="">
@@ -182,12 +167,10 @@ export function AnalysisPanel({
     )
   }
 
-  // Results available - single page summary
   return (
     <div style={{ width: '100%', height:'100vh' }}>
       <div className="title">Analysis Results</div>
 
-      {/* Summary Text - Only show when both timing info and summary are ready */}
       {results.summary && (
         <div className="header" style={{ marginBottom: '30px', marginTop: '30px' }}>
           <div className="" style={{ marginBottom: '30px' }}>Incident Summary:</div>
@@ -206,7 +189,6 @@ export function AnalysisPanel({
         </div>
       )}
 
-      {/* Section Analysis Progress Bar */}
       {showSectionProgress && (
         <div className="" style={{ marginBottom: '30px' }}>
           <p className="text">Performing in-depth analysis...</p>
@@ -225,7 +207,6 @@ export function AnalysisPanel({
         </div>
       )}
 
-      {/* Scroll hint - shows after section analysis completes */}
       {results.summary && !showSectionProgress && !isDescribing && (
         <div className="text" style={{ 
           marginTop: '20px', 

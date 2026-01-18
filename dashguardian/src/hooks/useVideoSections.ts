@@ -11,7 +11,6 @@ export const useVideoSections = (
     if (results && videoDuration) {
       const medianTime = results.medianTime
 
-      // Event section: 5 seconds before to 5 seconds after median
       const eventStart = Math.max(0, medianTime - 5)
       const eventEnd = Math.min(videoDuration, medianTime + 5)
 

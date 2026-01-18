@@ -10,7 +10,6 @@ export function SectionAnalyzer({
   sections,
   sectionDescriptions,
 }: SectionAnalyzerProps) {
-  // Check if all descriptions are complete
   const hasAllDescriptions = 
     sectionDescriptions.length === 3 && 
     sectionDescriptions.every((desc) => {
@@ -24,7 +23,6 @@ export function SectionAnalyzer({
       return false
     })
 
-  // Don't render if no sections or descriptions not ready
   if (!sections || !hasAllDescriptions) {
     return null
   }

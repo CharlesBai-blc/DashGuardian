@@ -4,23 +4,19 @@ import { parseJsonResponse } from '../utils'
 
 const MODEL = 'gemini-3-flash-preview'
 
-// Helper to build Gemini API URL
 const getGeminiUrl = (apiKey: string) => 
   `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`
 
-// Helper to extract raw base64 from data URI
 const extractBase64 = (dataUri: string): string => {
   const match = dataUri.match(/^data:video\/\w+;base64,(.+)$/)
   return match ? match[1] : dataUri
 }
 
-// Helper to get mime type from data URI
 const getMimeType = (dataUri: string): string => {
   const match = dataUri.match(/^data:(video\/\w+);base64,/)
   return match ? match[1] : 'video/mp4'
 }
 
-// Gemini API response type
 interface GeminiResponse {
   candidates?: Array<{
     content?: {
@@ -35,7 +31,6 @@ interface GeminiResponse {
   }
 }
 
-// Helper to extract content from Gemini response
 const extractGeminiContent = (data: GeminiResponse): string | null => {
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null
 }
@@ -176,7 +171,6 @@ export const describeSectionCall = async (
     if (content) {
       try {
         const parsed = JSON.parse(content)
-        // Validate it's an object with string values
         if (typeof parsed === 'object' && parsed !== null) {
           return parsed as StructuredSectionDescription
         }
@@ -185,7 +179,6 @@ export const describeSectionCall = async (
       }
     }
     
-    // Fallback: return empty structure
     return {}
   } catch (error) {
     console.error(`Error describing ${section.name}:`, error)

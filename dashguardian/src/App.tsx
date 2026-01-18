@@ -15,7 +15,6 @@ function App() {
     if (page === currentPage || isTransitioning) return
     setIsTransitioning(true)
     setCurrentPage(page)
-    // Transition completes after CSS animation (500ms)
     setTimeout(() => setIsTransitioning(false), 500)
   }
 
@@ -33,7 +32,6 @@ function App() {
     }
   }, [currentPage])
 
-  // Handle video setup
   useEffect(() => {
     const video = videoRef.current
     if (!video || currentPage !== 'home') return
@@ -43,10 +41,8 @@ function App() {
     video.play().catch(() => {})
   }, [currentPage])
 
-  // Render both pages with CSS transitions
   return (
     <div className="page-container">
-      {/* Animated Logo - exists outside page wrappers */}
       <a 
         className={`floating-logo ${currentPage === 'analyze' ? 'analyze-position' : 'home-position'}`}
         onClick={() => navigateTo(currentPage === 'home' ? 'analyze' : 'home')}
@@ -55,7 +51,6 @@ function App() {
         <img src="LogoWhite.png" alt="DashGuardian Logo"/>
       </a>
 
-      {/* Home Page */}
       <div className={`page-wrapper ${currentPage === 'home' ? 'active' : 'inactive-left'}`}>
         <div id="page" className="primary home-page">
           <video
@@ -93,7 +88,6 @@ function App() {
         </div>
       </div>
 
-      {/* Analyze Page */}
       <div className={`page-wrapper ${currentPage === 'analyze' ? 'active' : 'inactive-right'}`}>
         <AnalyzePage onBack={() => navigateTo('home')} />
       </div>

@@ -19,7 +19,6 @@ export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) 
     onFileChange(file)
   }
 
-  // Before upload: show upload button
   if (!selectedFile) {
     return (
       <div id="video">
@@ -36,7 +35,6 @@ export function VideoSection({ selectedFile, onFileChange }: VideoSectionProps) 
     )
   }
 
-  // After upload: show VideoPlayer
   return (
     <div id="video-container">
       <VideoPlayer file={selectedFile} />
