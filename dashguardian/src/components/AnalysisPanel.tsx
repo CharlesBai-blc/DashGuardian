@@ -176,7 +176,7 @@ export function AnalysisPanel({
 
   // Results available - single page summary
   return (
-    <div className="">
+    <div style={{ width: '100%', height:'100vh' }}>
       <div className="title">Analysis Results</div>
 
       <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
@@ -199,8 +199,8 @@ export function AnalysisPanel({
 
       {/* Section Analysis Progress Bar */}
       {showSectionProgress && (
-        <div className="" style={{ marginBottom: '20px' }}>
-          <p className="text">(section analysis in progress)</p>
+        <div className="" style={{ marginBottom: '30px' }}>
+          <p className="text">Analyzing Section...</p>
           <div
             className="progressBar"
             style={{

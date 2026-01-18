@@ -19,20 +19,20 @@ export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResul
   }
 
   return (
-    <div>
-      <div className="text">
+    <div className="text">
+      <li className="text">
         <span className="stat-item-label">Collision:  </span>
         <span className="stat-item-value">{results.medianTime.toFixed(1)}s</span>
-      </div>
+      </li>
 
-      <div className="text">
+      <li className="text">
         <span className="stat-item-label">Window:  </span>
         <span className="stat-item-value">
           {results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s
         </span>
-      </div>
+      </li>
 
-      <div className="text">
+      <li className="text">
         <span className="stat-item-label">Perspective:  </span>
         <span
           className="stat-item-value-colored"
@@ -40,13 +40,13 @@ export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResul
         >
           {results.detectedFault}
         </span>
-      </div>
+      </li>
 
       {videoDuration && (
-        <div className="text">
+        <li className="text">
           <span className="stat-item-label">Duration:  </span>
           <span className="stat-item-value">{videoDuration.toFixed(1)}s</span>
-        </div>
+        </li>
       )}
     </div>
   )
