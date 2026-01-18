@@ -77,6 +77,16 @@ export function VideoAnalyzer() {
   const handleNewFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
     if (file) {
+      const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+      if (file.size > MAX_FILE_SIZE) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1)
+        alert(`File is too large (${sizeMB}MB). Please select a file under 5MB.`)
+        // Clear the input so user can select again
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        return
+      }
       handleFileChange(file)
     }
   }
