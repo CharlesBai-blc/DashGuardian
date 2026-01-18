@@ -10,41 +10,17 @@ const brollVideos = ['/broll1.mp4', '/broll2.mp4'/*, '/broll3.mp4', '/broll4.mp4
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
-  const [canScroll, setCanScroll] = useState(false)
-  const timerRef = useRef<number | null>(null)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Enable scrolling after button animation (1.8s delay + 0.8s duration = 2.6s)
-  useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
-
-    if (currentPage === 'home') {
-      setTimeout(() => setCanScroll(false), 0)
-      timerRef.current = window.setTimeout(() => {
-        setCanScroll(true)
-        timerRef.current = null
-      }, 2600)
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-        timerRef.current = null
-      }
-    }
-  }, [currentPage])
-
-  // Control scroll container
-  useEffect(() => {
-    const container = document.querySelector('.home-scroll-container') as HTMLElement
-    if (container) {
-      container.style.overflowY = canScroll ? 'auto' : 'hidden'
-    }
-  }, [canScroll])
+  const navigateTo = (page: 'home' | 'analyze') => {
+    if (page === currentPage || isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentPage(page)
+    // Transition completes after CSS animation (500ms)
+    setTimeout(() => setIsTransitioning(false), 500)
+  }
 
   useEffect(() => {
     if (currentPage === 'home') {
@@ -79,50 +55,56 @@ function App() {
     }
   }, [currentVideoIndex, currentPage])
 
-  if (currentPage === 'analyze') {
-    return <AnalyzePage onBack={() => setCurrentPage('home')} />
-  }
-
-  // Home Page
+  // Render both pages with CSS transitions
   return (
-    <div id="page" className="primary home-page">
-      <video
-        ref={videoRef}
-        className="home-background-video"
-        autoPlay
-        muted
-        loop={false}
-        playsInline
-      />
-      {/* <div id="top">
-        <a id="Home" className="active">Home</a>
-        <a id="Analyze" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>Analyze</a>
-      </div> */}
-      <div id="top">
-        <a id="Home" className="active" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>
-          <img id="logo" src="LogoWhite.png" alt="DashGuardian Logo"/>
-        </a>
-      </div>
-      
-      <div className="home-scroll-container">
-        <div className="home-content">
-          <h1 className="home-title">
-            Dash<span style={{ color: '#90cdf4' }}>Guardian</span>
-          </h1>
-          <p className="home-subtitle">
-            AI-powered dashcam analysis
-          </p>
-          <button
-            className="home-button"
-            onClick={() => setCurrentPage('analyze')}
-          >
-            Dash to the Future
-          </button>
+    <div className="page-container">
+      {/* Animated Logo - exists outside page wrappers */}
+      <a 
+        className={`floating-logo ${currentPage === 'analyze' ? 'analyze-position' : 'home-position'}`}
+        onClick={() => navigateTo(currentPage === 'home' ? 'analyze' : 'home')}
+        style={{ cursor: 'pointer' }}
+      >
+        <img src="LogoWhite.png" alt="DashGuardian Logo"/>
+      </a>
+
+      {/* Home Page */}
+      <div className={`page-wrapper ${currentPage === 'home' ? 'active' : 'inactive-left'}`}>
+        <div id="page" className="primary home-page">
+          <video
+            ref={videoRef}
+            className="home-background-video"
+            autoPlay
+            muted
+            loop={false}
+            playsInline
+          />
+          
+          <div className="home-scroll-container">
+            <div className="home-content">
+              <h1 className="home-title">
+                Dash<span style={{ color: '#90cdf4' }}>Guardian</span>
+              </h1>
+              <p className="home-subtitle">
+                AI-powered dashcam analysis
+              </p>
+              <button
+                className="home-button"
+                onClick={() => navigateTo('analyze')}
+              >
+                Dash to the Future
+              </button>
+            </div>
+            <MissionPage />
+            <HelpPage1 />
+            <HelpPage2 />
+            <HelpPage3 />
+          </div>
         </div>
-        <MissionPage />
-        <HelpPage1 />
-        <HelpPage2 />
-        <HelpPage3 />
+      </div>
+
+      {/* Analyze Page */}
+      <div className={`page-wrapper ${currentPage === 'analyze' ? 'active' : 'inactive-right'}`}>
+        <AnalyzePage onBack={() => navigateTo('home')} />
       </div>
     </div>
   )

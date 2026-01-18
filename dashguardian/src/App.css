@@ -1,5 +1,75 @@
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
+/* Page Transition Styles */
+.page-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-wrapper.active {
+  transform: translateX(0);
+  z-index: 2;
+}
+
+.page-wrapper.inactive-left {
+  transform: translateX(-100%);
+  z-index: 1;
+}
+
+.page-wrapper.inactive-right {
+  transform: translateX(100%);
+  z-index: 1;
+}
+
+/* Floating Logo - animates between pages */
+.floating-logo {
+  position: fixed;
+  z-index: 100;
+  top: 20px;
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-logo img {
+  width: 50px;
+  transition: opacity 0.3s;
+}
+
+.floating-logo:hover img {
+  opacity: 0.3;
+}
+
+/* Home page position: centered */
+.floating-logo.home-position {
+  left: calc(50% - 25px);
+}
+
+.floating-logo.home-position img {
+  opacity: 0.5;
+}
+
+/* Analyze page position: top right */
+.floating-logo.analyze-position {
+  left: calc(100% - 75px);
+}
+
+.floating-logo.analyze-position img {
+  opacity: 0.8;
+}
+
 .primary {
   background-color: rgb(18,18,18);
 }
@@ -44,7 +114,7 @@
   width: 100%;
   height: 100vh;
   /* top: 70px; */
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
