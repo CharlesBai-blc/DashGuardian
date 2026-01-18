@@ -251,42 +251,43 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
           style={{ marginBottom: '10px', display: 'block' }}
         />
         {selectedFile && (
-          <p style={{ color: 'blue', marginBottom: '10px' }}>
+          <p style={{ color: '#64b5f6', marginBottom: '10px' }}>
             ✓ {selectedFile.name} selected
           </p>
         )}
         {isLoading && <p>⏳ Analyzing video (8 parallel calls)...</p>}
         {results && (
-          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-            <h3 style={{ marginTop: 0 }}>Analysis Results</h3>
-            <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '4px' }}>
-              <p style={{ margin: '5px 0' }}><strong>Median Collision Time:</strong> <span style={{ fontSize: '1.4em', fontWeight: 'bold', color: '#2e7d32' }}>{results.medianTime.toFixed(1)}s</span></p>
-              <p style={{ margin: '5px 0' }}><strong>Median Window:</strong> <span style={{ fontWeight: 'bold' }}>[{results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s]</span></p>
+          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <h3 style={{ marginTop: 0, color: 'inherit' }}>Analysis Results</h3>
+            <div style={{ marginBottom: '15px', padding: '12px', backgroundColor: 'rgba(76, 175, 80, 0.15)', borderRadius: '6px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
+              <p style={{ margin: '5px 0', color: 'inherit' }}><strong>Median Collision Time:</strong> <span style={{ fontSize: '1.4em', fontWeight: 'bold', color: '#66bb6a' }}>{results.medianTime.toFixed(1)}s</span></p>
+              <p style={{ margin: '5px 0', color: 'inherit' }}><strong>Median Window:</strong> <span style={{ fontWeight: 'bold' }}>[{results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s]</span></p>
               {videoDuration && (
-                <p style={{ margin: '5px 0', color: '#666' }}><strong>Video Duration:</strong> {videoDuration.toFixed(1)}s</p>
+                <p style={{ margin: '5px 0', color: 'rgba(255,255,255,0.6)' }}><strong>Video Duration:</strong> {videoDuration.toFixed(1)}s</p>
               )}
             </div>
             
             {/* Video Sections Display */}
             {sections && (
               <div style={{ marginBottom: '15px' }}>
-                <h4 style={{ marginBottom: '10px' }}>Video Sections</h4>
+                <h4 style={{ marginBottom: '10px', color: 'inherit' }}>Video Sections</h4>
                 
                 {/* Visual timeline bar */}
                 <div style={{ 
                   display: 'flex', 
-                  height: '40px', 
-                  borderRadius: '6px', 
+                  height: '44px', 
+                  borderRadius: '8px', 
                   overflow: 'hidden',
                   marginBottom: '15px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.1)'
                 }}>
                   {sections.map((section) => {
                     const widthPercent = videoDuration ? (section.duration / videoDuration) * 100 : 0
                     const colors = {
-                      ante: { bg: '#90caf9', border: '#1976d2' },
-                      event: { bg: '#ef5350', border: '#c62828' },
-                      post: { bg: '#a5d6a7', border: '#388e3c' }
+                      ante: { bg: '#1e88e5', text: '#fff' },
+                      event: { bg: '#e53935', text: '#fff' },
+                      post: { bg: '#43a047', text: '#fff' }
                     }
                     return (
                       <div
@@ -294,14 +295,15 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
                         style={{
                           width: `${widthPercent}%`,
                           backgroundColor: colors[section.name].bg,
-                          borderLeft: section.name !== 'ante' ? `2px solid ${colors[section.name].border}` : 'none',
+                          borderLeft: section.name !== 'ante' ? '2px solid rgba(0,0,0,0.3)' : 'none',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#1a1a1a',
+                          color: colors[section.name].text,
                           fontWeight: 'bold',
                           fontSize: '0.85em',
-                          minWidth: widthPercent > 5 ? 'auto' : '0'
+                          minWidth: widthPercent > 5 ? 'auto' : '0',
+                          textShadow: '0 1px 2px rgba(0,0,0,0.3)'
                         }}
                         title={`${section.label}: ${section.start.toFixed(1)}s - ${section.end.toFixed(1)}s (${section.duration.toFixed(1)}s)`}
                       >
@@ -314,28 +316,33 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
                 {/* Section details table */}
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9em' }}>
                   <thead>
-                    <tr style={{ backgroundColor: '#ddd' }}>
-                      <th style={{ padding: '8px', textAlign: 'left' }}>Section</th>
-                      <th style={{ padding: '8px', textAlign: 'left' }}>Start</th>
-                      <th style={{ padding: '8px', textAlign: 'left' }}>End</th>
-                      <th style={{ padding: '8px', textAlign: 'left' }}>Duration</th>
+                    <tr style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                      <th style={{ padding: '10px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Section</th>
+                      <th style={{ padding: '10px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Start</th>
+                      <th style={{ padding: '10px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>End</th>
+                      <th style={{ padding: '10px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Duration</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sections.map((section) => {
                       const rowColors = {
-                        ante: '#e3f2fd',
-                        event: '#ffebee',
-                        post: '#e8f5e9'
+                        ante: 'rgba(30, 136, 229, 0.15)',
+                        event: 'rgba(229, 57, 53, 0.15)',
+                        post: 'rgba(67, 160, 71, 0.15)'
+                      }
+                      const textColors = {
+                        ante: '#64b5f6',
+                        event: '#ef5350',
+                        post: '#81c784'
                       }
                       return (
-                        <tr key={section.name} style={{ backgroundColor: rowColors[section.name], borderBottom: '1px solid #ccc' }}>
-                          <td style={{ padding: '8px', fontWeight: section.name === 'event' ? 'bold' : 'normal' }}>
+                        <tr key={section.name} style={{ backgroundColor: rowColors[section.name], borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '10px', fontWeight: section.name === 'event' ? 'bold' : 'normal', color: textColors[section.name] }}>
                             {section.name === 'event' ? '⚡ ' : ''}{section.label}
                           </td>
-                          <td style={{ padding: '8px' }}>{section.start.toFixed(1)}s</td>
-                          <td style={{ padding: '8px' }}>{section.end.toFixed(1)}s</td>
-                          <td style={{ padding: '8px' }}>{section.duration.toFixed(1)}s</td>
+                          <td style={{ padding: '10px', color: 'inherit' }}>{section.start.toFixed(1)}s</td>
+                          <td style={{ padding: '10px', color: 'inherit' }}>{section.end.toFixed(1)}s</td>
+                          <td style={{ padding: '10px', color: 'inherit' }}>{section.duration.toFixed(1)}s</td>
                         </tr>
                       )
                     })}
@@ -344,22 +351,22 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
               </div>
             )}
             
-            <details>
-              <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Individual Results ({results.individualResults.length} responses)</summary>
+            <details style={{ marginTop: '10px' }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: 'rgba(255,255,255,0.7)', padding: '8px 0' }}>Individual Results ({results.individualResults.length} responses)</summary>
               <table style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse', fontSize: '0.9em' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#ddd' }}>
-                    <th style={{ padding: '5px', textAlign: 'left' }}>#</th>
-                    <th style={{ padding: '5px', textAlign: 'left' }}>Time (s)</th>
-                    <th style={{ padding: '5px', textAlign: 'left' }}>Window</th>
+                  <tr style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                    <th style={{ padding: '8px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>#</th>
+                    <th style={{ padding: '8px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Time (s)</th>
+                    <th style={{ padding: '8px', textAlign: 'left', color: 'inherit', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Window</th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.individualResults.map((r, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid #ccc' }}>
-                      <td style={{ padding: '5px' }}>{i + 1}</td>
-                      <td style={{ padding: '5px' }}>{r.approx_t_s.toFixed(1)}</td>
-                      <td style={{ padding: '5px' }}>[{r.window_s[0].toFixed(1)} - {r.window_s[1].toFixed(1)}]</td>
+                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                      <td style={{ padding: '8px', color: 'rgba(255,255,255,0.6)' }}>{i + 1}</td>
+                      <td style={{ padding: '8px', color: 'inherit' }}>{r.approx_t_s.toFixed(1)}</td>
+                      <td style={{ padding: '8px', color: 'inherit' }}>[{r.window_s[0].toFixed(1)} - {r.window_s[1].toFixed(1)}]</td>
                     </tr>
                   ))}
                 </tbody>
