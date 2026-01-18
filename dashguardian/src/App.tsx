@@ -6,12 +6,9 @@ import { HelpPage1 } from './components/HelpPage1'
 import { HelpPage2 } from './components/HelpPage2'
 import { HelpPage3 } from './components/HelpPage3'
 
-const brollVideos = ['/broll1.mp4', '/broll2.mp4'/*, '/broll3.mp4', '/broll4.mp4', '/broll5.mp4'*/]
-
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const navigateTo = (page: 'home' | 'analyze') => {
@@ -36,24 +33,15 @@ function App() {
     }
   }, [currentPage])
 
-  // Handle video looping
+  // Handle video setup
   useEffect(() => {
     const video = videoRef.current
     if (!video || currentPage !== 'home') return
 
-    const handleVideoEnd = () => {
-      setCurrentVideoIndex((prev) => (prev+1) % brollVideos.length)
-    }
-
-    video.addEventListener('ended', handleVideoEnd)
-    video.src = brollVideos[currentVideoIndex]
+    video.src = '/broll1.mp4'
     video.load()
     video.play().catch(() => {})
-
-    return () => {
-      video.removeEventListener('ended', handleVideoEnd)
-    }
-  }, [currentVideoIndex, currentPage])
+  }, [currentPage])
 
   // Render both pages with CSS transitions
   return (
@@ -75,7 +63,7 @@ function App() {
             className="home-background-video"
             autoPlay
             muted
-            loop={false}
+            loop={true}
             playsInline
           />
           
