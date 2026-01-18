@@ -3,9 +3,11 @@ import '../App.css'
 
 interface AnalysisResultsSummaryProps {
   results: AggregatedResults
+  onResetAndUpload?: () => void
+  isAnalysisComplete?: boolean
 }
 
-export function AnalysisResultsSummary({ results }: AnalysisResultsSummaryProps) {
+export function AnalysisResultsSummary({ results, onResetAndUpload, isAnalysisComplete }: AnalysisResultsSummaryProps) {
   const getPerspectiveColor = (fault: string) => {
     switch (fault) {
       case 'offender':
@@ -26,6 +28,24 @@ export function AnalysisResultsSummary({ results }: AnalysisResultsSummaryProps)
       >
         {results.detectedFault.toUpperCase()}
       </span>
+      {isAnalysisComplete && onResetAndUpload && (
+        <div style={{ marginTop: '30px' }}>
+          <button
+            onClick={onResetAndUpload}
+            className="home-button"
+            style={{
+              clipPath: 'none',
+              animation: 'none',
+              fontSize: '18px',
+              fontWeight: 600,
+              fontFamily: '"Google Sans", sans-serif',
+              color: 'rgba(255,255,255)'
+            }}
+          >
+            Upload New File
+          </button>
+        </div>
+      )}
     </div>
   )
 }

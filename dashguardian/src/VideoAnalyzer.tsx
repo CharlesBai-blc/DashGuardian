@@ -13,13 +13,14 @@ export function VideoAnalyzer() {
   const [isDescribing, setIsDescribing] = useState(false)
   const [base64VideoCache, setBase64VideoCache] = useState<string | null>(null)
   const hasAutoTriggered = useRef(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { videoDuration, hiddenVideoRef } = useVideoDuration(selectedFile)
   const sections = useVideoSections(results, videoDuration)
 
-  const isAnalysisComplete =
+  const isAnalysisComplete: boolean =
     results !== null &&
-    results.summary &&
+    results.summary !== null &&
     results.summary.length > 0 &&
     !isLoading &&
     !isDescribing &&
@@ -52,6 +53,32 @@ export function VideoAnalyzer() {
     setSectionDescriptions([])
     setBase64VideoCache(null)
     hasAutoTriggered.current = false
+  }
+
+  const handleResetAndUpload = () => {
+    // Reset all state
+    setSelectedFile(null)
+    setResults(null)
+    setSectionDescriptions([])
+    setBase64VideoCache(null)
+    setIsLoading(false)
+    setIsDescribing(false)
+    hasAutoTriggered.current = false
+    
+    // Clear file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+    
+    // Trigger file picker
+    fileInputRef.current?.click()
+  }
+
+  const handleNewFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null
+    if (file) {
+      handleFileChange(file)
+    }
   }
 
   const handleDescribeSections = useCallback(async () => {
@@ -234,6 +261,8 @@ export function VideoAnalyzer() {
               isLoading={isLoading}
               isDescribing={isDescribing}
               onAnalyze={handleAnalyze}
+              onResetAndUpload={handleResetAndUpload}
+              isAnalysisComplete={isAnalysisComplete}
             />
           </div>
         </div>
@@ -253,6 +282,13 @@ export function VideoAnalyzer() {
       )}
 
       <video ref={hiddenVideoRef} style={{ display: 'none' }} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*"
+        onChange={handleNewFileSelect}
+        style={{ display: 'none' }}
+      />
     </>
   )
 }

@@ -11,6 +11,8 @@ interface AnalysisPanelProps {
   isLoading: boolean
   isDescribing?: boolean
   onAnalyze: () => void
+  onResetAndUpload?: () => void
+  isAnalysisComplete?: boolean
 }
 
 export function AnalysisPanel({
@@ -18,7 +20,9 @@ export function AnalysisPanel({
   results,
   isLoading,
   isDescribing = false,
-  onAnalyze
+  onAnalyze,
+  onResetAndUpload,
+  isAnalysisComplete
 }: AnalysisPanelProps) {
   const [progress, setProgress] = useState(0)
   const [isCompleting, setIsCompleting] = useState(false)
@@ -142,12 +146,22 @@ export function AnalysisPanel({
           Video loaded successfully and ready for analysis.<br/> Click the <span style={{ color: '#90cdf4' }}>button</span> below to get started.
         </div>
 
-        
-        <a onClick={onAnalyze} className="analyzeButton">
-          {isLoading ? 'Analyzing video...' : 'Analyze Video'}
-        </a>
-        
-        
+        <div style={{ margin: '30px', marginTop: '40px' }}>
+          <button
+            onClick={onAnalyze}
+            className="home-button"
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              clipPath: 'none',
+              animation: 'none',
+              opacity: isLoading ? 0.7 : 1,
+              cursor: isLoading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isLoading ? 'Analyzing video...' : 'Analyze Video'}
+          </button>
+        </div>
         
         {showProgress && (
           <div
@@ -185,7 +199,11 @@ export function AnalysisPanel({
                   {sentence}
                 </li>
               ))} 
-              <AnalysisResultsSummary results={results} />
+              <AnalysisResultsSummary 
+                results={results} 
+                onResetAndUpload={onResetAndUpload}
+                isAnalysisComplete={isAnalysisComplete}
+              />
         </div>
       )}
 
