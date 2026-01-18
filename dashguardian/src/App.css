@@ -178,7 +178,7 @@
   top:0;
   display: flex;
   justify-content: center;
-  background-color: #000000;
+  /* background-color: rgba(0,0,0,.5); */
   backdrop-filter: blur(10px);
   overflow:hidden;
   border-bottom: 1px solid rgba(100,100,100,.5);
@@ -208,11 +208,11 @@
 #page {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow:visible;
 }
 
 #page.home-page {
-  overflow: hidden;
+  overflow: visible;
   position: fixed;
 }
 
