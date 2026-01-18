@@ -116,7 +116,7 @@ function App() {
             className="home-button"
             onClick={() => setCurrentPage('analyze')}
           >
-            Start Analyzing
+            Dash to the Future
           </button>
         </div>
         <MissionPage />
