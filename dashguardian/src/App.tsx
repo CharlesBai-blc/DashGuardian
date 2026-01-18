@@ -91,10 +91,10 @@ function App() {
         loop={false}
         playsInline
       />
-      <div id="top">
+      {/* <div id="top">
         <a id="Home" className="active">Home</a>
         <a id="Analyze" onClick={() => setCurrentPage('analyze')} style={{ cursor: 'pointer' }}>Analyze</a>
-      </div>
+      </div> */}
       
       <div className="home-scroll-container">
         <div className="home-content">
