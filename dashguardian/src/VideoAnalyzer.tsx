@@ -337,9 +337,9 @@ export function VideoAnalyzer() {
       const base64Video = await convertFileToBase64(selectedFile);
       setBase64VideoCache(base64Video);
 
-      // Make 8 parallel API calls
-      console.log("Making 8 parallel API calls...");
-      const promises = Array.from({ length: 8 }, () => makeAnalysisCall(base64Video, apiKey));
+      // Make 5 parallel API calls
+      console.log("Making 5 parallel API calls...");
+      const promises = Array.from({ length: 5 }, () => makeAnalysisCall(base64Video, apiKey));
       const apiResults = await Promise.all(promises);
 
       // Filter out null values
@@ -403,7 +403,7 @@ export function VideoAnalyzer() {
             ✓ {selectedFile.name} selected
           </p>
         )}
-        {isLoading && <p>⏳ Analyzing video (8 parallel calls)...</p>}
+        {isLoading && <p>⏳ Analyzing video (5 parallel calls)...</p>}
         {results && (
           <div style={{ marginTop: '20px', padding: '15px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
             <h3 style={{ marginTop: 0, color: 'inherit' }}>Analysis Results</h3>
