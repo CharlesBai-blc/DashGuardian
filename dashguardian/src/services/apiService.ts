@@ -109,7 +109,6 @@ export const makeAnalysisCall = async (
     }
     
     const content = extractGeminiContent(data)
-    console.log('Raw API response:', content)
     if (content) {
       return parseJsonResponse(content)
     }
@@ -166,7 +165,6 @@ export const describeSectionCall = async (
     }
     
     const content = extractGeminiContent(data)
-    console.log(`${section.name} description:`, content)
     
     if (content) {
       try {
@@ -236,7 +234,6 @@ export const generateVideoSummary = async (
     }
     
     const content = extractGeminiContent(data)
-    console.log('Video summary:', content)
     return content || 'Summary not available'
   } catch (error) {
     console.error('Error generating video summary:', error)

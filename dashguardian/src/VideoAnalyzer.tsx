@@ -107,7 +107,6 @@ export function VideoAnalyzer() {
         setBase64VideoCache(base64Video)
       }
 
-      console.log('Describing all 3 sections in parallel...')
       const promises = sections.map((section) =>
         describeSectionCall(base64Video!, apiKey, section, results.detectedFault)
           .then((structuredDescription) => ({ 
@@ -160,7 +159,6 @@ export function VideoAnalyzer() {
       const base64Video = await convertFileToBase64(selectedFile)
       setBase64VideoCache(base64Video)
 
-      console.log('Making 8 parallel API calls and summary call...')
       const analysisPromises = Array.from({ length: 8 }, () => makeAnalysisCall(base64Video, apiKey))
       const summaryPromise = generateVideoSummary(base64Video, apiKey)
       
@@ -176,8 +174,6 @@ export function VideoAnalyzer() {
         (r): r is NonNullable<typeof r> => r !== null
       )
 
-      console.log('Individual results:', validResults)
-
       if (validResults.length > 0) {
         const times = validResults.map((r) => r.approx_t_s)
         const medianTime = calculateMedian(times)
@@ -189,9 +185,6 @@ export function VideoAnalyzer() {
           calculateMedian(windowEnds)
         ]
 
-        console.log('Median collision time:', medianTime, 'seconds')
-        console.log('Median window:', medianWindow)
-
         const faultCounts = validResults.reduce(
           (acc, curr) => {
             acc[curr.fault] = (acc[curr.fault] || 0) + 1
@@ -202,18 +195,7 @@ export function VideoAnalyzer() {
 
         const faultEntries = Object.entries(faultCounts)
         const maxFault = faultEntries.reduce((a, b) => a[1] > b[1] ? a : b)
-        const minConsensus = Math.ceil(validResults.length * 0.6)
-        
-        let detectedFault: 'victim' | 'offender' | 'witness'
-        if (maxFault[1] >= minConsensus) {
-          detectedFault = maxFault[0] as 'victim' | 'offender' | 'witness'
-          console.log(`Strong consensus (${maxFault[1]}/${validResults.length}) for:`, detectedFault)
-        } else {
-          detectedFault = maxFault[0] as 'victim' | 'offender' | 'witness'
-          console.log(`Majority vote (${maxFault[1]}/${validResults.length}) for:`, detectedFault)
-        }
-        
-        console.log('Fault distribution:', faultCounts)
+        const detectedFault = maxFault[0] as 'victim' | 'offender' | 'witness'
 
         setResults({
           individualResults: validResults,
