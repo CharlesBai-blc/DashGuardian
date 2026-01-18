@@ -5,6 +5,7 @@ import promptsData from './prompts.json'
 interface AnalysisResult {
   approx_t_s: number
   window_s: [number, number]
+  fault: 'victim' | 'offender' | 'witness'
 }
 
 interface VideoSection {
@@ -26,6 +27,7 @@ interface AggregatedResults {
   individualResults: AnalysisResult[]
   medianTime: number
   medianWindow: [number, number]
+  detectedFault: 'victim' | 'offender' | 'witness'
 }
 
 interface PromptConfig {
@@ -46,7 +48,6 @@ export function VideoAnalyzer() {
   const [sections, setSections] = useState<VideoSection[] | null>(null)
   const [sectionDescriptions, setSectionDescriptions] = useState<SectionDescription[]>([])
   const [isDescribing, setIsDescribing] = useState(false)
-  const [perspective, setPerspective] = useState<string>('victim')
   const hiddenVideoRef = useRef<HTMLVideoElement>(null)
   const [base64VideoCache, setBase64VideoCache] = useState<string | null>(null)
 
@@ -133,10 +134,15 @@ export function VideoAnalyzer() {
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
-        if (typeof parsed.approx_t_s === 'number' && Array.isArray(parsed.window_s)) {
+        if (
+          typeof parsed.approx_t_s === 'number' && 
+          Array.isArray(parsed.window_s) &&
+          ['victim', 'offender', 'witness'].includes(parsed.fault)
+        ) {
           return {
             approx_t_s: parsed.approx_t_s,
-            window_s: parsed.window_s as [number, number]
+            window_s: parsed.window_s as [number, number],
+            fault: parsed.fault as 'victim' | 'offender' | 'witness'
           };
         }
       }
@@ -175,11 +181,17 @@ export function VideoAnalyzer() {
                   "type": "text",
                   "text": `Watch the entire video. Identify the first physical contact (collision) using this definition: first frame where bodies touch. Consider sudden and heavy camera movement as a very clear indication of collision.
 
-Return ONLY JSON with:
-- approx_t_s (seconds from start, to nearest 0.1s)
-- window_s as [start, end] (a 2–4 second window that definitely contains first contact)
+                          Identify who is at fault or the POV vehicle's role:
+                          - "victim": POV vehicle was hit or followed all rules while another caused the crash.
+                          - "offender": POV vehicle caused the crash or broke rules leading to it.
+                          - "witness": POV vehicle was not involved in the crash but witnessed it.
 
-Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
+                          Return ONLY JSON with:
+                          - approx_t_s (seconds from start, to nearest 0.1s)
+                          - window_s as [start, end] (a 2–4 second window that definitely contains first contact)
+                          - fault ("victim", "offender", or "witness")
+
+                          Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0], "fault": "victim"}`
                 },
                 {
                   "type": "video_url",
@@ -211,8 +223,9 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
     apiKey: string, 
     section: VideoSection
   ): Promise<string> => {
-    // Get prompts for current perspective
+    // Get prompts for current detected fault perspective
     const allPrompts = promptsData as PromptsData;
+    const perspective = results?.detectedFault || 'victim';
     const perspectivePrompts = allPrompts[perspective] || allPrompts.victim;
     const rawPrompt = perspectivePrompts[section.name as keyof PromptConfig];
     
@@ -350,10 +363,20 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
         console.log("Median collision time:", medianTime, "seconds");
         console.log("Median window:", medianWindow);
         
+        // Determine majority fault
+        const faultCounts = validResults.reduce((acc, curr) => {
+          acc[curr.fault] = (acc[curr.fault] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        
+        const detectedFault = Object.entries(faultCounts).reduce((a, b) => a[1] > b[1] ? a : b)[0] as 'victim' | 'offender' | 'witness';
+        console.log("Detected fault/perspective:", detectedFault);
+
         setResults({
           individualResults: validResults,
           medianTime,
-          medianWindow
+          medianWindow,
+          detectedFault
         });
       } else {
         console.error("No valid results received from API calls");
@@ -387,6 +410,7 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
             <div style={{ marginBottom: '15px', padding: '12px', backgroundColor: 'rgba(76, 175, 80, 0.15)', borderRadius: '6px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
               <p style={{ margin: '5px 0', color: 'inherit' }}><strong>Median Collision Time:</strong> <span style={{ fontSize: '1.4em', fontWeight: 'bold', color: '#66bb6a' }}>{results.medianTime.toFixed(1)}s</span></p>
               <p style={{ margin: '5px 0', color: 'inherit' }}><strong>Median Window:</strong> <span style={{ fontWeight: 'bold' }}>[{results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s]</span></p>
+              <p style={{ margin: '5px 0', color: 'inherit' }}><strong>Detected Perspective:</strong> <span style={{ fontWeight: 'bold', textTransform: 'capitalize', color: results.detectedFault === 'offender' ? '#ef5350' : '#64b5f6' }}>{results.detectedFault}</span></p>
               {videoDuration && (
                 <p style={{ margin: '5px 0', color: 'rgba(255,255,255,0.6)' }}><strong>Video Duration:</strong> {videoDuration.toFixed(1)}s</p>
               )}
@@ -474,33 +498,12 @@ Example response: {"approx_t_s": 5.2, "window_s": [4.0, 7.0]}`
                   </tbody>
                 </table>
 
-                {/* Describe Sections Button and Perspective Selector */}
-                <div style={{ marginTop: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <label style={{ fontSize: '0.8em', color: 'rgba(255,255,255,0.6)' }}>Perspective:</label>
-                    <select 
-                      value={perspective}
-                      onChange={(e) => setPerspective(e.target.value)}
-                      style={{
-                        padding: '8px',
-                        backgroundColor: 'rgba(255,255,255,0.1)',
-                        color: '#fff',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <option value="victim">Victim Perspective</option>
-                      <option value="offender">Offender Perspective</option>
-                      <option value="witness">Witness Perspective</option>
-                    </select>
-                  </div>
-
+                {/* Describe Sections Button */}
+                <div style={{ marginTop: '15px' }}>
                   <button
                     onClick={handleDescribeSections}
                     disabled={isDescribing}
                     style={{
-                      alignSelf: 'flex-end',
                       padding: '10px 20px',
                       backgroundColor: '#7c4dff',
                       color: '#fff',
