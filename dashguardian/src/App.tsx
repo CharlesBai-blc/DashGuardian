@@ -68,7 +68,7 @@ function App() {
       <div className="home-scroll-container">
         <div className="home-content">
           <h1 className="home-title">
-            DashGuardian
+            Dash<span style={{ color: '#90cdf4' }}>Guardian</span>
           </h1>
           <p className="home-subtitle">
             AI-powered dashcam analysis

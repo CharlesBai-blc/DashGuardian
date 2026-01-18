@@ -72,11 +72,11 @@
 }
 
 .home-button {
-  padding: 16px 40px;
-  font-size: 18px;
+  padding: 12px 30px;
+  font-size: 24px;
   font-weight: 600;
-  background-color: #fff;
-  color: #000;
+  background-color: #90cdf4;
+  color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   cursor: pointer;
@@ -84,6 +84,7 @@
   clip-path: inset(0 50% 0 50%);
   animation: materializeFromCenter 0.8s ease-out 1.8s forwards;
 }
+
 
 @keyframes materializeTopToBottom {
   from {
@@ -384,9 +385,21 @@ a {
   margin-bottom: 30px;
 }
 
+.info-page h2 {
+  font-size: 40px;
+  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
 .info-page p {
-  font-size: 18px;
+  font-size: 24px;
   line-height: 1.8;
   margin-bottom: 20px;
+  margin-left: 15px;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.info-page strong {
+  font-weight: 550;
 }
