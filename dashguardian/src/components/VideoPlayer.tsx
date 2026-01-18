@@ -30,6 +30,8 @@ export function VideoPlayer({ file }: VideoPlayerProps) {
       <video
         id="video"
         src={videoUrl}
+        autoPlay
+        loop={true}
         playsInline
         controls
         style={{
