@@ -67,15 +67,6 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes materializeFromCenter {
   from {
     clip-path: inset(0 50% 0 50%);
@@ -85,15 +76,10 @@
   }
 }
 
-.secondary {
-  background-color: rgb(200,200,200);
-}
-
 .title {
   color: #fff;
   font-weight: 600;
   font-size: 32px;
-  /* font-family:Verdana, Geneva, Tahoma, sans-serif; */
   font-family: "Google Sans", sans-serif;
   margin:30px;
   margin-bottom:0;
@@ -103,25 +89,12 @@
   color: #fff;
   font-weight: 400;
   font-size: 16px;
-  /* font-family:Verdana, Geneva, Tahoma, sans-serif; */
   font-family: "Google Sans", sans-serif;
-
-
-  margin:30px;
+  margin: 30px;
   margin-top: 15px;
-  margin-bottom:0;
-
+  margin-bottom: 0;
   z-index: 1;
 }
-
-
-
-/* #page {
-  width: 100vw;
-  height: 100vh;
-  text-align: center;
-  overflow: hidden;
-} */
 
 #top {
   position: fixed;
@@ -132,7 +105,6 @@
   justify-content: center;
   background-color: #000000;
   backdrop-filter: blur(10px);
-  /* opacity: .5; */
   overflow:hidden;
   border-bottom: 1px solid rgba(100,100,100,.5);
   z-index: 2;
@@ -158,7 +130,6 @@
   font-weight: 500;
   font-size: 20px;
 }
-/* top thins when scroll down */
 #page {
   width: 100vw;
   height: 100vh;
@@ -292,33 +263,14 @@
   display: inline-block;
 }
 
-.analysis-scroll-container {
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.analysis-page {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  min-height: 100%;
-  box-sizing: border-box;
-}
-
 #video {
   position: absolute;
   top: 0;
-  bottom:120px;
-  left:0;
+  bottom: 120px;
+  left: 0;
   width: 100%;
   height: calc(100% - 120px);
-
-  
-  /* border-radius: 20px; */
-  /* border: 2px solid rgba(25,25,25,.8); */
-
-  /* box-shadow: 0 0 10px black;   */
   z-index: 0;
-
 }
 
 .upload {
@@ -343,9 +295,9 @@
   opacity: .5;
 }
 .paragraph {
-  margin-top: '20px';
+  margin-top: 20px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: '14px';
+  font-size: 14px;
   font-family: "Google Sans", sans-serif;
 }
 
@@ -379,8 +331,3 @@ video, a, .title, .text {
 a {
   pointer-events: auto;
 }
-
-/* *::-webkit-media-controls-start-playback-button {
-    display: none!important;
-    -webkit-appearance: none;
-} */
