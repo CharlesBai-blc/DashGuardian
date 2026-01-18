@@ -6,44 +6,156 @@ interface AnalysisResultsSummaryProps {
 }
 
 export function AnalysisResultsSummary({ results, videoDuration }: AnalysisResultsSummaryProps) {
+  const getPerspectiveColor = (fault: string) => {
+    switch (fault) {
+      case 'offender':
+        return '#ef5350'
+      case 'witness':
+        return '#7c4dff'
+      default:
+        return '#64b5f6'
+    }
+  }
+
   return (
     <div
       style={{
-        marginBottom: '15px',
-        padding: '12px',
-        backgroundColor: 'rgba(76, 175, 80, 0.15)',
-        borderRadius: '6px',
-        border: '1px solid rgba(76, 175, 80, 0.3)'
+        display: 'inline-flex',
+        padding: '12px 20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '12px',
+        borderLeft: '4px solid #fff',
+        marginBottom: '8px',
+        gap: '20px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
       }}
     >
-      <p style={{ margin: '5px 0', color: 'inherit' }}>
-        <strong>Median Collision Time:</strong>{' '}
-        <span style={{ fontSize: '1.4em', fontWeight: 'bold', color: '#66bb6a' }}>
-          {results.medianTime.toFixed(1)}s
-        </span>
-      </p>
-      <p style={{ margin: '5px 0', color: 'inherit' }}>
-        <strong>Median Window:</strong>{' '}
-        <span style={{ fontWeight: 'bold' }}>
-          [{results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s]
-        </span>
-      </p>
-      <p style={{ margin: '5px 0', color: 'inherit' }}>
-        <strong>Detected Perspective:</strong>{' '}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontFamily: '"Google Sans", sans-serif'
+        }}
+      >
         <span
           style={{
-            fontWeight: 'bold',
-            textTransform: 'capitalize',
-            color: results.detectedFault === 'offender' ? '#ef5350' : '#64b5f6'
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontWeight: 400,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          Collision:
+        </span>
+        <span
+          style={{
+            fontSize: '16px',
+            fontWeight: 600,
+            color: '#fff',
+            fontFamily: '"Google Sans", sans-serif'
+          }}
+        >
+          {results.medianTime.toFixed(1)}s
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontFamily: '"Google Sans", sans-serif'
+        }}
+      >
+        <span
+          style={{
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontWeight: 400,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          Window:
+        </span>
+        <span
+          style={{
+            fontSize: '16px',
+            fontWeight: 600,
+            color: '#fff',
+            fontFamily: '"Google Sans", sans-serif'
+          }}
+        >
+          {results.medianWindow[0].toFixed(1)}s - {results.medianWindow[1].toFixed(1)}s
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontFamily: '"Google Sans", sans-serif'
+        }}
+      >
+        <span
+          style={{
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontWeight: 400,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          Perspective:
+        </span>
+        <span
+          style={{
+            fontSize: '16px',
+            fontWeight: 600,
+            color: getPerspectiveColor(results.detectedFault),
+            fontFamily: '"Google Sans", sans-serif',
+            textTransform: 'capitalize'
           }}
         >
           {results.detectedFault}
         </span>
-      </p>
+      </div>
+
       {videoDuration && (
-        <p style={{ margin: '5px 0', color: 'rgba(255,255,255,0.6)' }}>
-          <strong>Video Duration:</strong> {videoDuration.toFixed(1)}s
-        </p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontFamily: '"Google Sans", sans-serif'
+          }}
+        >
+          <span
+            style={{
+              fontSize: '12px',
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontWeight: 400,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+          >
+            Duration:
+          </span>
+          <span
+            style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#fff',
+              fontFamily: '"Google Sans", sans-serif'
+            }}
+          >
+            {videoDuration.toFixed(1)}s
+          </span>
+        </div>
       )}
     </div>
   )

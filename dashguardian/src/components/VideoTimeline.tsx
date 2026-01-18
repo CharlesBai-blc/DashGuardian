@@ -6,9 +6,9 @@ interface VideoTimelineProps {
 }
 
 const SECTION_COLORS = {
-  ante: { bg: '#1e88e5', text: '#fff' },
-  event: { bg: '#e53935', text: '#fff' },
-  post: { bg: '#43a047', text: '#fff' }
+  ante: { bg: 'rgba(255, 255, 255, 0.3)', text: '#fff' },
+  event: { bg: 'rgba(255, 255, 255, 0.5)', text: '#000' },
+  post: { bg: 'rgba(255, 255, 255, 0.3)', text: '#fff' }
 }
 
 export function VideoTimeline({ sections, videoDuration }: VideoTimelineProps) {

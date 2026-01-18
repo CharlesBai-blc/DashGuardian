@@ -20,7 +20,7 @@ export function FileInput({ onFileChange, selectedFile, disabled }: FileInputPro
         style={{ marginBottom: '10px', display: 'block' }}
       />
       {selectedFile && (
-        <p style={{ color: '#64b5f6', marginBottom: '10px' }}>
+        <p style={{ color: '#fff', marginBottom: '10px' }}>
           ✓ {selectedFile.name} selected
         </p>
       )}

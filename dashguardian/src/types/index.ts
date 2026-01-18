@@ -12,9 +12,13 @@ export interface VideoSection {
   duration: number
 }
 
+export interface StructuredSectionDescription {
+  [key: string]: string
+}
+
 export interface SectionDescription {
   section: 'ante' | 'event' | 'post'
-  description: string
+  description: string | StructuredSectionDescription
   isLoading: boolean
   error?: string
 }
@@ -24,6 +28,7 @@ export interface AggregatedResults {
   medianTime: number
   medianWindow: [number, number]
   detectedFault: 'victim' | 'offender' | 'witness'
+  summary: string
 }
 
 export interface PromptConfig {

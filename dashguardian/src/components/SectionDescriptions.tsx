@@ -1,4 +1,4 @@
-import type { VideoSection, SectionDescription } from '../types'
+import type { VideoSection, SectionDescription, StructuredSectionDescription } from '../types'
 
 interface SectionDescriptionsProps {
   sections: VideoSection[]
@@ -6,27 +6,26 @@ interface SectionDescriptionsProps {
 }
 
 const BORDER_COLORS = {
-  ante: '#1e88e5',
-  event: '#e53935',
-  post: '#43a047'
+  ante: '#fff',
+  event: '#fff',
+  post: '#fff'
 }
 
 const BG_COLORS = {
-  ante: 'rgba(30, 136, 229, 0.1)',
-  event: 'rgba(229, 57, 53, 0.1)',
-  post: 'rgba(67, 160, 71, 0.1)'
+  ante: 'rgba(255, 255, 255, 0.1)',
+  event: 'rgba(255, 255, 255, 0.1)',
+  post: 'rgba(255, 255, 255, 0.1)'
 }
 
 const HEADER_COLORS = {
-  ante: '#64b5f6',
-  event: '#ef5350',
-  post: '#81c784'
+  ante: '#fff',
+  event: '#fff',
+  post: '#fff'
 }
 
 export function SectionDescriptions({ sections, descriptions }: SectionDescriptionsProps) {
   return (
-    <div style={{ marginTop: '20px' }}>
-      <h4 style={{ marginBottom: '15px', color: 'inherit' }}>Section Descriptions</h4>
+    <div>
       {sections.map((section) => {
         const desc = descriptions.find((d) => d.section === section.name)
         return (
@@ -34,7 +33,7 @@ export function SectionDescriptions({ sections, descriptions }: SectionDescripti
             key={section.name}
             style={{
               marginBottom: '15px',
-              padding: '15px',
+              padding: '30px',
               backgroundColor: BG_COLORS[section.name],
               borderLeft: `4px solid ${BORDER_COLORS[section.name]}`,
               borderRadius: '0 8px 8px 0'
@@ -45,48 +44,102 @@ export function SectionDescriptions({ sections, descriptions }: SectionDescripti
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '10px'
+                marginBottom: '20px'
               }}
             >
-              <h5
+              <h2
                 style={{
                   margin: 0,
                   color: HEADER_COLORS[section.name],
-                  fontSize: '1.1em'
+                  fontSize: '32px',
+                  fontWeight: 600,
+                  fontFamily: '"Google Sans", sans-serif'
                 }}
               >
                 {section.name === 'event' ? '⚡ ' : ''}
                 {section.label}
                 <span
                   style={{
-                    fontWeight: 'normal',
-                    fontSize: '0.85em',
+                    fontWeight: 400,
+                    fontSize: '18px',
                     color: 'rgba(255,255,255,0.5)',
-                    marginLeft: '10px'
+                    marginLeft: '15px',
+                    fontFamily: '"Google Sans", sans-serif'
                   }}
                 >
                   ({section.start.toFixed(1)}s - {section.end.toFixed(1)}s)
                 </span>
-              </h5>
+              </h2>
             </div>
 
             {desc?.isLoading ? (
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontStyle: 'italic', margin: 0 }}>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.6)',
+                  fontStyle: 'italic',
+                  margin: 0,
+                  fontSize: '18px',
+                  fontFamily: '"Google Sans", sans-serif'
+                }}
+              >
                 ⏳ Analyzing this section...
               </p>
             ) : desc?.error ? (
-              <p style={{ color: '#ef5350', margin: 0 }}>❌ Error: {desc.error}</p>
-            ) : desc?.description ? (
               <p
                 style={{
-                  color: 'rgba(255,255,255,0.9)',
+                  color: '#fff',
                   margin: 0,
-                  lineHeight: '1.6',
-                  whiteSpace: 'pre-wrap'
+                  fontSize: '18px',
+                  fontFamily: '"Google Sans", sans-serif'
                 }}
               >
-                {desc.description}
+                ❌ Error: {desc.error}
               </p>
+            ) : desc?.description ? (
+              typeof desc.description === 'string' ? (
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    margin: 0,
+                    lineHeight: '1.8',
+                    whiteSpace: 'pre-wrap',
+                    fontSize: '18px',
+                    fontFamily: '"Google Sans", sans-serif'
+                  }}
+                >
+                  {desc.description}
+                </p>
+              ) : (
+                <div>
+                  {Object.entries(desc.description as StructuredSectionDescription).map(([header, body]) => (
+                    <div key={header} style={{ marginBottom: '24px' }}>
+                      <h3
+                        style={{
+                          margin: 0,
+                          marginBottom: '12px',
+                          color: '#fff',
+                          fontSize: '20px',
+                          fontWeight: 600,
+                          fontFamily: '"Google Sans", sans-serif'
+                        }}
+                      >
+                        {header}
+                      </h3>
+                      <p
+                        style={{
+                          margin: 0,
+                          color: 'rgba(255,255,255,0.9)',
+                          lineHeight: '1.8',
+                          fontSize: '18px',
+                          fontFamily: '"Google Sans", sans-serif'
+                        }}
+                      >
+                        {body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )
             ) : null}
           </div>
         )

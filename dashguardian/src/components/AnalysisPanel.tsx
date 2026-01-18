@@ -1,32 +1,21 @@
-import type { AggregatedResults, VideoSection, SectionDescription } from '../types'
+import type { AggregatedResults, VideoSection } from '../types'
 import { AnalysisResultsSummary } from './AnalysisResultsSummary'
-import { VideoTimeline } from './VideoTimeline'
-import { SectionDetailsTable } from './SectionDetailsTable'
-import { SectionDescriptions } from './SectionDescriptions'
-import { IndividualResultsTable } from './IndividualResultsTable'
 
 interface AnalysisPanelProps {
   selectedFile: File | null
   results: AggregatedResults | null
   sections: VideoSection[] | null
-  sectionDescriptions: SectionDescription[]
   videoDuration: number | null
   isLoading: boolean
-  isDescribing: boolean
   onAnalyze: () => void
-  onDescribeSections: () => void
 }
 
 export function AnalysisPanel({
   selectedFile,
   results,
-  sections,
-  sectionDescriptions,
   videoDuration,
   isLoading,
-  isDescribing,
-  onAnalyze,
-  onDescribeSections
+  onAnalyze
 }: AnalysisPanelProps) {
   // Empty state: no file selected
   if (!selectedFile) {
@@ -56,14 +45,14 @@ export function AnalysisPanel({
               padding: '15px 30px',
               fontSize: '16px',
               fontWeight: 600,
-              backgroundColor: isLoading ? '#555' : '#7c4dff',
-              color: '#fff',
-              border: 'none',
+              backgroundColor: isLoading ? '#555' : '#fff',
+              color: '#000',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
               borderRadius: '8px',
               cursor: isLoading ? 'not-allowed' : 'pointer',
               fontFamily: '"Google Sans", sans-serif',
               transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(124, 77, 255, 0.3)'
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
             }}
           >
             {isLoading ? '⏳ Analyzing video...' : 'Analyze Video'}
@@ -73,13 +62,13 @@ export function AnalysisPanel({
     )
   }
 
-  // Results available
+  // Results available - single page summary
   return (
     <div
       style={{
-        padding: '30px',
         height: '100%',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        padding: '30px'
       }}
     >
       <div className="title" style={{ margin: 0, marginBottom: '20px' }}>
@@ -88,53 +77,44 @@ export function AnalysisPanel({
 
       <AnalysisResultsSummary results={results} videoDuration={videoDuration} />
 
-      {/* Video Sections Display */}
-      {sections && (
-        <div style={{ marginBottom: '15px' }}>
-          <h4
+      {/* Summary Text - Only show when both timing info and summary are ready */}
+      {results.summary && (
+        <div
+          style={{
+            marginTop: '5px',
+            marginBottom: '30px',
+            padding: '20px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            borderLeft: '4px solid #fff'
+          }}
+        >
+          <h3
             style={{
-              marginBottom: '10px',
-              color: 'inherit',
+              margin: 0,
+              marginBottom: '15px',
+              color: '#fff',
               fontFamily: '"Google Sans", sans-serif',
-              fontWeight: 500
+              fontSize: '24px',
+              fontWeight: 600
             }}
           >
-            Video Sections
-          </h4>
-
-          <VideoTimeline sections={sections} videoDuration={videoDuration} />
-
-          <SectionDetailsTable sections={sections} />
-
-          {/* Describe Sections Button */}
-          <div style={{ marginTop: '15px' }}>
-            <button
-              onClick={onDescribeSections}
-              disabled={isDescribing}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#7c4dff',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: isDescribing ? 'not-allowed' : 'pointer',
-                opacity: isDescribing ? 0.7 : 1,
-                fontWeight: 'bold',
-                fontFamily: '"Google Sans", sans-serif'
-              }}
-            >
-              {isDescribing ? '⏳ Describing Sections...' : '🔍 Describe All Sections'}
-            </button>
-          </div>
-
-          {/* Section Descriptions */}
-          {sectionDescriptions.length > 0 && (
-            <SectionDescriptions sections={sections} descriptions={sectionDescriptions} />
-          )}
+            Incident Summary
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontFamily: '"Google Sans", sans-serif',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              whiteSpace: 'pre-wrap'
+            }}
+          >
+            {results.summary}
+          </p>
         </div>
       )}
-
-      <IndividualResultsTable results={results.individualResults} />
     </div>
   )
 }

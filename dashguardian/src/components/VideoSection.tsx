@@ -48,25 +48,25 @@ export function VideoSection({ selectedFile, onFileChange, disabled }: VideoSect
             padding: '20px 40px',
             fontSize: '18px',
             fontWeight: 600,
-            backgroundColor: '#7c4dff',
-            color: '#fff',
-            border: 'none',
+            backgroundColor: '#fff',
+            color: '#000',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
             borderRadius: '12px',
             cursor: disabled ? 'not-allowed' : 'pointer',
             opacity: disabled ? 0.7 : 1,
             fontFamily: '"Google Sans", sans-serif',
             transition: 'all 0.3s ease',
-            boxShadow: '0 4px 15px rgba(124, 77, 255, 0.3)'
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
           }}
           onMouseEnter={(e) => {
             if (!disabled) {
               e.currentTarget.style.transform = 'scale(1.05)'
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(124, 77, 255, 0.4)'
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.4)'
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)'
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(124, 77, 255, 0.3)'
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)'
           }}
         >
           Upload Video

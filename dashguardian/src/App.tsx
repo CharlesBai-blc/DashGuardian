@@ -1,9 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { AnalyzePage } from './AnalyzePage'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home')
+
+  useEffect(() => {
+    if (currentPage === 'home') {
+      document.body.classList.add('home-page-active')
+      document.documentElement.classList.add('home-page-active')
+    } else {
+      document.body.classList.remove('home-page-active')
+      document.documentElement.classList.remove('home-page-active')
+    }
+    return () => {
+      document.body.classList.remove('home-page-active')
+      document.documentElement.classList.remove('home-page-active')
+    }
+  }, [currentPage])
 
   if (currentPage === 'analyze') {
     return <AnalyzePage onBack={() => setCurrentPage('home')} />

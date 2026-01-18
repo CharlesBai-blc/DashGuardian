@@ -5,15 +5,15 @@ interface SectionDetailsTableProps {
 }
 
 const ROW_COLORS = {
-  ante: 'rgba(30, 136, 229, 0.15)',
-  event: 'rgba(229, 57, 53, 0.15)',
-  post: 'rgba(67, 160, 71, 0.15)'
+  ante: 'rgba(255, 255, 255, 0.1)',
+  event: 'rgba(255, 255, 255, 0.1)',
+  post: 'rgba(255, 255, 255, 0.1)'
 }
 
 const TEXT_COLORS = {
-  ante: '#64b5f6',
-  event: '#ef5350',
-  post: '#81c784'
+  ante: '#fff',
+  event: '#fff',
+  post: '#fff'
 }
 
 export function SectionDetailsTable({ sections }: SectionDetailsTableProps) {

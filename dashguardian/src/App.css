@@ -6,6 +6,12 @@
 
 .home-page {
   background-color: #000000;
+  overflow: hidden;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
 }
 
 .home-content {
@@ -15,6 +21,8 @@
   justify-content: center;
   height: calc(100vh - 70px);
   margin-top: 70px;
+  width: 100vw;
+  overflow: hidden;
 }
 
 .home-title {
@@ -40,9 +48,9 @@
   padding: 16px 40px;
   font-size: 18px;
   font-weight: 600;
-  background-color: #7c4dff;
-  color: #fff;
-  border: none;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   cursor: pointer;
   font-family: "Google Sans", sans-serif;
@@ -154,6 +162,12 @@
 #page {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+}
+
+#page.home-page {
+  overflow: hidden;
+  position: fixed;
 }
 
 #main {
@@ -162,20 +176,85 @@
   left: 0;
   height: calc(100% - 70px);
   top: 70px;
-  overflow-y: scroll;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.analyzer-top-section {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 #left {
-  position: absolute;
-  left: 0;
+  position: relative;
   width: 70%;
-  height: 100%;
+  min-height: calc(100vh - 70px);
 }
+
 #right {
-  position: absolute;
-  left: 70%;
+  position: relative;
   width: 30%;
-  height: 100%;
+  min-height: calc(100vh - 70px);
+  overflow: hidden;
+}
+
+.section-analyzer {
+  width: 100%;
+  background-color: rgb(10, 10, 20);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.section-analyzer-scroll-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-analyzer-page {
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.section-analyzer-content {
+  max-width: 1200px;
+  width: 100%;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+.section-analyzer-header {
+  padding: 0;
+}
+
+.section-analyzer-section-page {
+  padding: 0;
+}
+
+.section-analysis-title {
+  display: inline-block;
+}
+
+.analysis-scroll-container {
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.analysis-page {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 #video {
@@ -201,6 +280,14 @@
 
 body {
   margin: 0;
+}
+
+body.home-page-active,
+html.home-page-active {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed;
 }
 
 video, a, .title, .text {
