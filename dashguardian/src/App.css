@@ -4,6 +4,79 @@
   background-color: rgb(10,10,20);
 }
 
+.home-page {
+  background-color: #000000;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 70px);
+  margin-top: 70px;
+}
+
+.home-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #fff;
+  font-family: "Google Sans", sans-serif;
+  margin-bottom: 20px;
+  clip-path: inset(0 0 100% 0);
+  animation: materializeTopToBottom 1s ease-out 0.5s forwards;
+}
+
+.home-subtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Google Sans", sans-serif;
+  margin-bottom: 40px;
+  clip-path: inset(0 0 100% 0);
+  animation: materializeTopToBottom 0.8s ease-out 1.2s forwards;
+}
+
+.home-button {
+  padding: 16px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: #7c4dff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Google Sans", sans-serif;
+  clip-path: inset(0 50% 0 50%);
+  animation: materializeFromCenter 0.8s ease-out 1.8s forwards;
+}
+
+@keyframes materializeTopToBottom {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes materializeFromCenter {
+  from {
+    clip-path: inset(0 50% 0 50%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .secondary {
   background-color: rgb(200,200,200);
 }
@@ -49,6 +122,7 @@
   top:0;
   display: flex;
   justify-content: center;
+  background-color: #000000;
   backdrop-filter: blur(10px);
   /* opacity: .5; */
   overflow:hidden;
